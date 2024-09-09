@@ -1,6 +1,14 @@
 from people import people, print_person
 
-teams = []
+teams = [{
+    'name': 'eq1',
+    'team': [people[0]]
+},
+{
+    'name': 'eq2',
+    'team': [people[1]]
+}
+]
 
 team = {
     'name': 'name',
