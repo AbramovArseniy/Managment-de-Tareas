@@ -9,7 +9,12 @@ people = [{
     'name': "Name",
     'surname': "surname",
     'age': "age",
-    'specialization': "specialization",  # Baja, Media, Alta
+    'specialization': "specialization",
+},{
+    'name': "Name1",
+    'surname': "surname1",
+    'age': "age1",
+    'specialization': "specialization1",
 }]
 
 
@@ -41,12 +46,29 @@ def new_person(name, surname, age, specialization):
 
 
 def manage_people():
-    print("Ingrase numero de la persona que quieres cambiar ")
-    for i, person in enumerate(people):
-        print(f"{i + 1}: {person['name']} {person['surname']}")
+    actions = {"Agregar una persona": create_person,
+               "Manejar una persona": manage_person,
+               "Volver a inicio": go_begin}
 
-    id = int(input())
-    manage_person(id - 1)
+    print("elige accion que quieres hacer:")
+
+    for i, action in enumerate(actions.keys()):
+        print(f"{i + 1}: {action}")
+
+    act = int(input())
+    if act == 1:
+        create_person()
+    elif act == 2:
+        print("Ingrese numero de persona que desea modificar ")
+        for i, person in enumerate(people):
+            print(f"{i + 1}: {person['name']} {person['surname']}")
+        id = int(input())
+        manage_person(id - 1)
+    elif act == 3:
+        go_begin()
+    else:
+        print("error")
+        return 0
 
 
 def remove_person(id):
@@ -55,19 +77,19 @@ def remove_person(id):
 
 
 def change_person_name(id):
-    name = input("Ingrese nuevo nombre de persona")
+    name = input("Ingrese nuevo nombre de persona: ")
     people[id]['name'] = name
     print(f"El nuevo nombre de persona es {name}")
 
 
 def change_person_surname(id):
-    surname = input("Ingrese nuevo nombre de persona")
+    surname = input("Ingrese nuevo nombre de persona: ")
     people[id]['surname'] = surname
     print(f"El nuevo apellido de persona es {surname}")
 
 
-def go_begin():
-    return False
+def go_begin(*args):
+    return 0
 
 
 def manage_person(id):
@@ -85,13 +107,8 @@ def manage_person(id):
     action(id)
 
 
-def print_people(people):
-    for s in people.keys():
-        print(f"{s}: {people[s]} ")
+def print_person(person):
+    for s in person.keys():
+        print(f"{s}: {person[s]} ")
 
 
-# person = create_person()
-# print_people(people)
-
-manage_people()
-manage_people()
