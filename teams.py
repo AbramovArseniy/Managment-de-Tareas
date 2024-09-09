@@ -2,10 +2,6 @@ from people import people, print_person
 
 teams = []
 
-team = {
-    'name': 'name',
-    'team': [{}, {}]
-}
 
 
 def create_team():
@@ -52,7 +48,7 @@ def remove_team(team_id):
 
 def change_team_name(team_id):
     name = input("Ingrese nuevo nombre de equipo: ")
-    team[team_id]['name'] = name
+    teams[team_id]['name'] = name
     print(f"El nuevo nombre de equipo es {name}")
 
 
