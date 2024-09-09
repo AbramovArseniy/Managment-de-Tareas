@@ -5,17 +5,7 @@ specializations = {
     4: 'Team lid',
 }
 
-people = [{
-    'name': "Name",
-    'surname': "surname",
-    'age': "age",
-    'specialization': "specialization",
-},{
-    'name': "Name1",
-    'surname': "surname1",
-    'age': "age1",
-    'specialization': "specialization1",
-}]
+people = []
 
 
 def create_person():
