@@ -4,7 +4,7 @@
 El proyecto es un sistema de gestión de tareas para un proyecto en equipo. Los usuarios podrán 
  - agregar tareas
  - crear equipos
- - asignarlas a los miembros de equipoы
+ - asignarlas a los miembros de equipo
  - seguir el progreso de su ejecución
 
 # Menu

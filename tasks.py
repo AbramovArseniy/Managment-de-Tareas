@@ -22,21 +22,7 @@ statuses = {
     5: 'Para Eliminar'
 }
 
-tasks = [{
-    'name':'t1',
-    'description':'t1',
-    'priority': 2, # Baja, Media, Alta
-    'status':1, # Para Asignar, En Progreso, En Revision, Hecho, Para Eliminar
-    'team': teams.teams[0],
-},
-{
-    'name':'t2',
-    'description':'t2',
-    'priority': 3, # Baja, Media, Alta
-    'status':1, # Para Asignar, En Progreso, En Revision, Hecho, Para Eliminar
-    'team': teams.teams[0],
-}
-]
+tasks = []
 
 
 def new_task(name, desc, prio):
@@ -97,6 +83,7 @@ def assign_team():
         print('Id no es valido')
         team_id = input()
     tasks[task_id]['team'] = teams.teams[int(team_id) - 1]
+    tasks[task_id]['status'] = 2
 
 
 
