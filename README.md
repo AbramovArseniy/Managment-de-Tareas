@@ -1,5 +1,6 @@
 # Managment-de-Tareas
 
+
 El proyecto es un sistema de gestión de tareas para un proyecto en equipo. Los usuarios podrán 
  - agregar tareas
  - crear equipos
@@ -106,8 +107,3 @@ Elige el equipo
 
 Arsenii Igoshev ya no esta en el equipo Genii Etogo Mira
 ```
-
-
-
-
-
