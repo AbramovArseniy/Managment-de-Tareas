@@ -189,7 +189,7 @@ def filter_tasks():
 
 
     id = input('Ingrese Id de tarea para ver mas informacion o -1 para volver al inicio: ')
-    while id not in map(str, range(1, len(tasks) + 1)) and id != -1:
+    while id not in map(str, range(1, len(tasks) + 1)) and id != '-1':
         id = input('Id no es valido. Ingrese otra: ')
     if id == '-1':
         go_back()
