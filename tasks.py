@@ -197,11 +197,11 @@ def change_task():
 
     elif cmd == '4':
         new_status = input('Ingrese el nuevo estado de la tarea:\n1. Para Asignar\n2. En Progreso\n3. En Revision\n4. Hecho\n 5. Para Eliminar\n')
-        while new_prio not in ('1', '2', '3', '4', '5'):
+        while new_status not in ('1', '2', '3', '4', '5'):
             print("Tiene que ingresar un numero entre 1 y 5")
-            new_prio = input()
+            new_status = input()
 
-        task['status'] = int(new_prio)
+        task['status'] = int(new_status)
 
 
 
