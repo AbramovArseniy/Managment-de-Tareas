@@ -4,6 +4,12 @@ teams = []
 
 
 def create_team():
+    """
+        Crea un nuevo equipo solicitando al usuario un nombre y añadiendo personas al equipo.
+
+        Solicita al usuario que seleccione personas de la lista 'people' y las agrega al equipo.
+        Una vez completado, añade el nuevo equipo a la lista global 'teams'.
+    """
     name = input('Ingrese nombre de equipo: ')
     persons = []
     while True:
@@ -54,21 +60,34 @@ def create_team():
 
 
 def go_begin():
+    """
+        Función de marcador de posición para regresar al menú anterior.
+    """
     return 0
 
 
 def remove_team(team_id):
+    """
+        Elimina un equipo de la lista 'teams' usando su ID.
+    """
     teams.pop(team_id)
     print("El equipo borro")
 
 
 def change_team_name(team_id):
+    """
+        Cambia el nombre de un equipo.
+    """
     name = input("Ingrese nuevo nombre de equipo: ")
     teams[team_id]['name'] = name
     print(f"El nuevo nombre de equipo es {name}")
 
 
 def add_person_to_team(team_id):
+    """
+       Añade una persona al equipo seleccionado.
+    """
+
     filtered_people = list(filter(lambda x: x not in teams[team_id]['persons'], people))
     for i, person in enumerate(filtered_people):
         print(i + 1, end=".\n")
@@ -89,6 +108,10 @@ def add_person_to_team(team_id):
 
 
 def show_team(team_id):
+    """
+       Muestra la información de un equipo específico, incluyendo su nombre y miembros.
+    """
+
     print("Equipo: ", teams[team_id]['name'])
     print("Miembros del equipo:")
     for person in teams[team_id]['persons']:
@@ -97,6 +120,9 @@ def show_team(team_id):
 
 
 def manage_team(team_id):
+    """
+        Administra un equipo seleccionado, ofreciendo opciones para eliminar, cambiar nombre, añadir personas o volver al inicio.
+    """
     actions = {"borrar equipo": remove_team,
                "cambiar nombre de equipo": change_team_name,
                "agregar nueva persona ": add_person_to_team,
@@ -121,6 +147,11 @@ def manage_team(team_id):
 
 
 def manage_teams():
+    """
+        Gestiona los equipos, permitiendo agregar nuevos equipos, modificar equipos existentes o volver al inicio.
+
+        Muestra los equipos existentes y permite al usuario elegir una acción.
+    """
     print("\nEquipos: ")
     for team in teams:
         print("Nombre del equipo:", team['name'])

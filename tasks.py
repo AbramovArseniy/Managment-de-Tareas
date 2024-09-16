@@ -26,6 +26,12 @@ tasks = []
 
 
 def new_task(name, desc, prio):
+    """
+    Crea una nueva tarea y la devuelve como un diccionario.
+
+    Returns:
+        dict: Nueva tarea con el estado 'Para Asignar' y equipo estándar 'No team assigned'.
+    """
     task = {
         'name': name,
         'description': desc,
@@ -37,10 +43,19 @@ def new_task(name, desc, prio):
 
 
 def go_back():
+    """
+        Función de marcador de posición para volver al menú anterior.
+
+    """
     return 0
 
 
 def manage_tasks():
+    """
+      Administra las tareas, permitiendo agregar, modificar o filtrar tareas.
+
+      Solicita al usuario la acción que quiere realizar y llama a la función correspondiente.
+    """
     actions = {
         '1': create_task,
         '2': manage_task,
@@ -70,6 +85,11 @@ def manage_task():
 
 
 def assign_team():
+    """
+       Asigna un equipo a una tarea.
+
+       Permite al usuario elegir una tarea y asignarla a un equipo.
+    """
     if len(teams.teams) == 0:
         print('Primero tiene que crear un equipo')
         return
@@ -89,6 +109,11 @@ def assign_team():
 
 
 def create_task():
+    """
+        Crea una nueva tarea solicitando al usuario el nombre, descripción y prioridad.
+
+        Agrega la tarea creada a la lista `tasks`.
+    """
     name = input('Ingrese nombre de la tarea: ')
     desc = input('Ingrese descripcion de la tarea: ')
     prio = input('Ingrese prioridad de su tarea:\n1. Baja\n2. Media\n3. Alta\n')
@@ -100,13 +125,20 @@ def create_task():
     print('Tarea es guardada\n')
 
 
-def print_tasks(filter_func=lambda x: True):
+def print_tasks(filter_func=lambda task: True):
+    """
+        Muestra una lista de tareas filtradas por una función específica.
+
+        Args:
+            filter_func (function, optional): Función de filtrado que toma una tarea y devuelve True o False.
+                                              Por defecto, muestra todas las tareas.
+    """
     filtered_tasks = list(filter(filter_func, tasks))
     if len(filtered_tasks) == 0:
         print('No hay tareas adecuadas\n')
         return
     for id, task in enumerate(filtered_tasks):
-        print(f'Id: {id + 1}\n'
+        print(f'Id: {tasks.index(task) + 1}\n'
               f'Nombre: {task["name"]}\n'
               f'Prioridad: {priorities[task["priority"]]}\n'
               f'Estado: {statuses[task["status"]]}\n'
@@ -114,15 +146,21 @@ def print_tasks(filter_func=lambda x: True):
 
 
 def filter_tasks():
+    """
+        Filtra las tareas por prioridad, estado o equipo.
+
+        Solicita al usuario el criterio de filtrado y llama a la función `print_tasks()` para mostrar las tareas filtradas.
+    """
     if len(tasks) == 0:
         print('Todavia no hay tareas\n')
         return
     param = input("Por qué quiere filtrar las tareas?\n"
                 "1. Prioridad\n"
                 "2. Estado\n"
-                "3. Equipo\n")
-    while param not in ('1', '2', '3'):
-        print("Tiene que ingresar un numero entre 1 y 3")
+                "3. Equipo\n"
+                "4. See All\n")
+    while param not in ('1', '2', '3', '4'):
+        print("Tiene que ingresar un numero entre 1 y 4")
         param = input()
     if param == '1':
         prio = input('Ingrese la nueva prioridad de la tarea:\n1. Baja\n2. Media\n3. Alta\n')
@@ -146,9 +184,27 @@ def filter_tasks():
             print('Id no es valido')
             team_id = input()
         print_tasks(lambda task: task['team'] == teams.teams[int(team_id) - 1])
+    elif param == '4':
+        print_tasks()
+
+
+    id = input('Ingrese Id de tarea para ver mas informacion o -1 para volver al inicio: ')
+    while id not in map(str, range(1, len(tasks) + 1)) and id != -1:
+        id = input('Id no es valido. Ingrese otra: ')
+    if id == '-1':
+        go_back()
+    else:
+        task = tasks[int(id) - 1]
+        print_task_info(task)
 
 
 def choose_task():
+    """
+        Muestra una lista de tareas y solicita al usuario el ID de la tarea a seleccionar.
+
+        Returns:
+            int: Índice de la tarea seleccionada en la lista `tasks`.
+    """
     print_tasks()
     id = input("Ingrese el Id de la tarea: ")
     while id not in map(str, range(1, len(tasks) + 1)):
@@ -158,6 +214,9 @@ def choose_task():
 
 
 def delete_task():
+    """
+        Elimina una tarea seleccionada de la lista `tasks`.
+    """
     if len(tasks) == 0:
         print('Todavia no hay tareas\n')
         return
@@ -167,6 +226,9 @@ def delete_task():
 
 
 def change_task():
+    """
+        Modifica las propiedades de una tarea seleccionada (nombre, descripción, prioridad o estado).
+    """
     if len(tasks) == 0:
         print('Todavia no hay tareas\n')
         return
@@ -197,20 +259,23 @@ def change_task():
 
     elif cmd == '4':
         new_status = input('Ingrese el nuevo estado de la tarea:\n1. Para Asignar\n2. En Progreso\n3. En Revision\n4. Hecho\n 5. Para Eliminar\n')
-        while new_prio not in ('1', '2', '3', '4', '5'):
+        while new_status not in ('1', '2', '3', '4', '5'):
             print("Tiene que ingresar un numero entre 1 y 5")
-            new_prio = input()
+            new_status = input()
 
-        task['status'] = int(new_prio)
+        task['status'] = int(new_status)
 
 
 
 
 def print_task_info(task):
+    """
+       Imprime la información detallada de una tarea específica.
+    """
     print(f'Nombre: {task["name"]}\n'
           f'Descripcion: {task["description"]}\n'
           f'Prioridad: {priorities[task["priority"]]}\n'
           f'Estado: {statuses[task["status"]]}\n'
-          f'Team: {task["team"]["name"]}')
+          f'Team: {task["team"]["name"]}\n')
 
 
