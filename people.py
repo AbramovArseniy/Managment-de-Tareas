@@ -5,7 +5,12 @@ specializations = {
     4: 'Team lid',
 }
 
-people = []
+people = [{
+        'name': "name",
+        'surname': "surname",
+        'age': "age",
+        'specialization': "JJ",
+    }]
 
 
 def create_person():
@@ -29,7 +34,7 @@ def new_person(name, surname, age, specialization):
         'name': name,
         'surname': surname,
         'age': age,
-        'specialization': specialization,  # Baja, Media, Alta
+        'specialization': specialization,
     }
 
     return person
@@ -45,14 +50,28 @@ def manage_people():
     for i, action in enumerate(actions.keys()):
         print(f"{i + 1}: {action}")
 
-    act = int(input())
+    act = input()
+    while act not in ('1', '2', '3'):
+        print("Tiene que ingresar un numero entre 1 y 3\n")
+        print("elige accion que quieres hacer: ")
+
+        act = input()
+
+    act = int(act)
+
     if act == 1:
         create_person()
     elif act == 2:
         print("Ingrese numero de persona que desea modificar ")
         for i, person in enumerate(people):
             print(f"{i + 1}: {person['name']} {person['surname']}")
-        id = int(input())
+        id = input()
+        while id not in [str(i) for i in range(1, len(people) + 1)]:
+            print(f"Tiene que ingresar un numero entre 1 y {len(people)}\n")
+            print("Ingrese numero de persona que desea modificar ")
+
+            id = input()
+        id = int(id)
         manage_person(id - 1)
     elif act == 3:
         go_begin()
@@ -92,12 +111,18 @@ def manage_person(id):
     for i, action in enumerate(actions.keys()):
         print(f"{i + 1}: {action}")
 
-    act = int(input())
-    action = actions[list(actions.keys())[act - 1]]
+    act = input()
+    while act not in ('1', '2', '3', '4'):
+        print("Tiene que ingresar un numero entre 1 y 4\n")
+        print("elige accion que quieres hacer:")
+
+        act = input()
+    action = actions[list(actions.keys())[int(act) - 1]]
     action(id)
 
 
 def print_person(person):
+
     for s in person.keys():
         print(f"{s}: {person[s]} ")
 

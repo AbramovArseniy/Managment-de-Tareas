@@ -3,29 +3,45 @@ from people import people, print_person
 teams = []
 
 
-
 def create_team():
     name = input('Ingrese nombre de equipo: ')
     persons = []
     while True:
         filtered_people = list(filter(lambda x: x not in persons, people))
+        if len(filtered_people) == 0:
+            print("No hay personas disponibles para añadir al equipo ")
+            return 0
+
         for i, person in enumerate(filtered_people):
             print(i + 1, end=".\n")
             print_person(person)
             print("----------------")
 
-        person_id = int(input("Elige numero de persona que quiere agregar a su equipo: "))
+        person_id = input("Elige numero de persona que quiere agregar a su equipo: ")
 
+        while person_id not in [str(i) for i in range(1, len(filtered_people) + 1)]:
+            print(f"Tiene que ingresar un numero entre 1 y {len(filtered_people)}\n")
+            person_id = input("Elige numero de persona que quiere agregar a su equipo: ")
+        person_id = int(person_id)
         if person_id > len(filtered_people) or person_id < 1:
             print("Numero incorrecto")
             continue
 
         persons.append(filtered_people[person_id - 1])
-        print(print_person(filtered_people[person_id - 1]), "\n Esta persona se ha añadido al equipo")
+        print( "\nEsta persona se ha añadido al equipo")
 
-        n = int(input("Que quieres hacer ?\n"
-                      "1. Agregar persona una mas\n"
-                      "2. Terminar\n: "))
+        print("Que quieres hacer ?\n"
+              "1. Agregar persona una mas\n"
+              "2. Terminar\n: ")
+
+        n = input()
+
+        while n not in ('1', '2'):
+            print("Tiene que ingresar un numero entre 1 y 2\n")
+            print("elige accion que quieres hacer:")
+            n = input()
+
+        n = int(n)
 
         if n == 2:
             new_team = {
@@ -59,7 +75,11 @@ def add_person_to_team(team_id):
         print_person(person)
         print("----------------")
 
-    person_id = int(input("Elige numero de person que quiere agregar a su equipo: "))
+    person_id = input("Elige numero de person que quiere agregar a su equipo: ")
+    while person_id not in range(1, len(filtered_people) + 1):
+        print(f"Tiene que ingresar un numero entre 1 y {filtered_people + 1}\n")
+        person_id = input()
+    person_id = int(person_id)
 
     if person_id > len(filtered_people) or person_id < 1:
         print("Numero incorrecto")
@@ -86,7 +106,13 @@ def manage_team(team_id):
     for i, action in enumerate(actions.keys()):
         print(f"{i + 1}: {action}")
 
-    act = int(input())
+    act = input()
+    while act not in ('1', '2', '3', '4'):
+        print("Tiene que ingresar un numero entre 1 y 4\n")
+        print("elige accion que quieres hacer:")
+        act = input()
+
+    act = int(act)
     if act < 1 or act > len(actions.keys()):
         print('incorrect numero de accion')
         return 0
@@ -111,8 +137,13 @@ def manage_teams():
 
     for i, action in enumerate(actions.keys()):
         print(f"{i + 1}: {action}")
+    act = input()
+    while act not in ('1', '2', '3'):
+        print("Tiene que ingresar un numero entre 1 y 3\n")
+        print("elige accion que quieres hacer:")
 
-    act = int(input())
+        act = input()
+    act = int(act)
     if act == 1:
         create_team()
     elif act == 2:

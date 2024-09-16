@@ -1,6 +1,7 @@
 from people import manage_people
-from teams import manage_teams
 from tasks import manage_tasks
+from teams import manage_teams
+
 
 def main():
     actions = {
@@ -15,4 +16,6 @@ def main():
             cmd = input()
         actions[cmd]()
 
-main()
+
+if __name__ == '__main__':
+    main()
