@@ -1,4 +1,5 @@
-from people import people, print_person
+from src.people.people import people, print_person
+import utils
 
 teams = []
 
@@ -10,6 +11,7 @@ def create_team():
         Solicita al usuario que seleccione personas de la lista 'people' y las agrega al equipo.
         Una vez completado, añade el nuevo equipo a la lista global 'teams'.
     """
+    utils.clear_console()
     name = input('Ingrese nombre de equipo: ')
     persons = []
     while True:
@@ -70,6 +72,7 @@ def remove_team(team_id):
     """
         Elimina un equipo de la lista 'teams' usando su ID.
     """
+    utils.clear_console()
     teams.pop(team_id)
     print("El equipo borro")
 
@@ -78,6 +81,7 @@ def change_team_name(team_id):
     """
         Cambia el nombre de un equipo.
     """
+    utils.clear_console()
     name = input("Ingrese nuevo nombre de equipo: ")
     teams[team_id]['name'] = name
     print(f"El nuevo nombre de equipo es {name}")
@@ -87,7 +91,7 @@ def add_person_to_team(team_id):
     """
        Añade una persona al equipo seleccionado.
     """
-
+    utils.clear_console()
     filtered_people = list(filter(lambda x: x not in teams[team_id]['persons'], people))
     for i, person in enumerate(filtered_people):
         print(i + 1, end=".\n")
@@ -111,7 +115,7 @@ def show_team(team_id):
     """
        Muestra la información de un equipo específico, incluyendo su nombre y miembros.
     """
-
+    utils.clear_console()
     print("Equipo: ", teams[team_id]['name'])
     print("Miembros del equipo:")
     for person in teams[team_id]['persons']:
@@ -123,6 +127,7 @@ def manage_team(team_id):
     """
         Administra un equipo seleccionado, ofreciendo opciones para eliminar, cambiar nombre, añadir personas o volver al inicio.
     """
+    utils.clear_console()
     actions = {"borrar equipo": remove_team,
                "cambiar nombre de equipo": change_team_name,
                "agregar nueva persona ": add_person_to_team,
@@ -152,6 +157,7 @@ def manage_teams():
 
         Muestra los equipos existentes y permite al usuario elegir una acción.
     """
+    utils.clear_console()
     print("\nEquipos: ")
     for team in teams:
         print("Nombre del equipo:", team['name'])

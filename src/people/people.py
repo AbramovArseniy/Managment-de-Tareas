@@ -1,3 +1,6 @@
+import utils
+
+
 specializations = {
     1: 'Middle programador',
     2: 'Senor programador',
@@ -17,6 +20,7 @@ def create_person():
         Returns:
             dict: La persona creada.
     """
+    utils.clear_console()
     name = input('Ingrese nombre de la persona: ')
     surname = input('Ingrese apellido de la persona: ')
     for s in specializations.keys():
@@ -39,6 +43,7 @@ def new_person(name, surname, age, specialization):
         Returns:
             dict: Diccionario que contiene los datos de la persona.
     """
+    utils.clear_console()
     person = {
         'name': name,
         'surname': surname,
@@ -55,6 +60,7 @@ def manage_people():
 
        Solicita al usuario que elija una acción y llama a la función correspondiente.
     """
+    utils.clear_console()
     actions = {"Agregar una persona": create_person,
                "Manejar una persona": manage_person,
                "Volver a inicio": go_begin}
@@ -98,6 +104,7 @@ def remove_person(id):
     """
         Elimina una persona de la lista 'people' basada en su ID.
     """
+    utils.clear_console()
     people.pop(id)
     print("La persona borro")
 
@@ -106,6 +113,7 @@ def change_person_name(id):
     """
         Cambia el nombre de una persona en la lista 'people'.
     """
+    utils.clear_console()
     name = input("Ingrese nuevo nombre de persona: ")
     people[id]['name'] = name
     print(f"El nuevo nombre de persona es {name}")
@@ -115,6 +123,7 @@ def change_person_surname(id):
     """
         Cambia el apellido de una persona en la lista 'people'.
     """
+    utils.clear_console()
     surname = input("Ingrese nuevo nombre de persona: ")
     people[id]['surname'] = surname
     print(f"El nuevo apellido de persona es {surname}")
@@ -131,6 +140,7 @@ def manage_person(id):
     """
         Permite gestionar una persona específica, ofreciendo opciones para borrar, cambiar nombre, cambiar apellido o volver al inicio.
     """
+    utils.clear_console()
     actions = {"borrar": remove_person,
                "cambiar nombre": change_person_name,
                "cambiar apellido": change_person_surname,
@@ -154,6 +164,7 @@ def print_person(person):
     """
         Imprime la información detallada de una persona.
     """
+    utils.clear_console()
     for s in person.keys():
         print(f"{s}: {person[s]} ")
 
