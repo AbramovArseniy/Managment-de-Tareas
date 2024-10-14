@@ -8,7 +8,7 @@ specializations = {
     4: 'Team lid',
 }
 
-people = []
+people = utils.load_from_json('src/people/people.json')
 
 
 def create_person():

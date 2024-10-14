@@ -1,3 +1,5 @@
+import json
+
 import src.teams.teams as teams
 import utils
 
@@ -21,14 +23,7 @@ statuses = {
     3: 'En Revision',
     4: 'Hecho',
 }
-
-tasks = [{
-    'name':'t' + str(i),
-    'description':'desc',
-    'priority':1, # Baja, Media, Alta
-    'status':1, # Para Asignar, En Progreso, En Revision, Hecho
-    'team': {'name': 'No assignada'},
-} for i in range(30)]
+tasks = utils.load_from_json('src/tasks/tasks.json')
 
 
 def new_task(name, desc, prio):

@@ -1,7 +1,7 @@
-from src.people.people import people, print_person
 import utils
+from src.people.people import people, print_person
 
-teams = []
+teams = utils.load_from_json('src/teams/teams.json')
 
 
 def create_team():
@@ -123,6 +123,11 @@ def show_team(team_id):
         print("----------------")
 
 
+def show_teams():
+    for id in range(len(teams)):
+        show_team(id)
+
+
 def manage_team(team_id):
     """
         Administra un equipo seleccionado, ofreciendo opciones para eliminar, cambiar nombre, añadir personas o volver al inicio.
@@ -148,6 +153,8 @@ def manage_team(team_id):
         print('incorrect numero de accion')
         return 0
     action = actions[list(actions.keys())[act - 1]]
+    if act == 4:
+        go_begin()
     action(team_id)
 
 
@@ -168,6 +175,7 @@ def manage_teams():
 
     actions = {"Agregar nueva equipo": create_team,
                "Manejar un equipo": manage_team,
+               'Ver equipos': show_teams,
                "Volver a inicio": go_begin}
 
     print("Elige accion que quieres hacer:")
@@ -175,8 +183,8 @@ def manage_teams():
     for i, action in enumerate(actions.keys()):
         print(f"{i + 1}: {action}")
     act = input()
-    while act not in ('1', '2', '3'):
-        print("Tiene que ingresar un numero entre 1 y 3\n")
+    while act not in ('1', '2', '3', '4'):
+        print("Tiene que ingresar un numero entre 1 y 4\n")
         print("elige accion que quieres hacer:")
 
         act = input()
@@ -193,9 +201,12 @@ def manage_teams():
             print(f"{i + 1}: {team['name']}")
         id = int(input())
         manage_team(id - 1)
+
     elif act == 3:
+        show_teams()
+
+    elif act == 4:
         go_begin()
     else:
         print("error. action incorrect")
         return 0
-
