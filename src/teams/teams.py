@@ -135,6 +135,7 @@ def manage_team(team_id):
     actions = {"borrar equipo": remove_team,
                "cambiar nombre de equipo": change_team_name,
                "agregar nueva persona ": add_person_to_team,
+               "Eliminar a una persona del equipo": remove_from_team,
                "volver a inicio": go_begin}
 
     print("elige accion que quieres hacer:")
@@ -142,7 +143,7 @@ def manage_team(team_id):
         print(f"{i + 1}: {action}")
 
     act = input()
-    while act not in ('1', '2', '3', '4'):
+    while act not in [str(i + 1) for i in range(len(actions.keys()))]:
         print("Tiene que ingresar un numero entre 1 y 4\n")
         print("elige accion que quieres hacer:")
         act = input()
@@ -155,6 +156,25 @@ def manage_team(team_id):
     if act == 4:
         go_begin()
     action(team_id)
+
+
+def remove_from_team(team_id):
+    utils.clear_console()
+    for id, person in enumerate(teams[team_id]['persons']):
+        print(id + 1, end=". ")
+        show_person(person)
+        print("---------")
+
+    n = input("Ingrese el número de la persona que desea eliminar del equipo.")
+    while n not in [str(i + 1) for i in range(len(teams[team_id]['persons']))]:
+        print("numero incorrecto")
+        n = input("Ingrese el número de la persona que desea eliminar del equipo")
+
+    teams[team_id]['persons'].pop(int(n) - 1)
+    utils.clear_console()
+    print("La persona ha sido eliminada del equipo con éxito")
+    print("Estado actual del equipo")
+    show_team(team_id)
 
 
 def manage_teams():
