@@ -1,4 +1,5 @@
 from src.people.people import people, print_person
+import src.tasks.tasks as tasks
 import utils
 
 teams = []
@@ -150,6 +151,23 @@ def manage_team(team_id):
     action = actions[list(actions.keys())[act - 1]]
     action(team_id)
 
+def print_top_teams():
+    stats = {}
+    for team in teams:
+        stats[team['name']] = 0
+        task_cnt = 0
+        for task in tasks.tasks:
+            if task['team'] == team and task['status'] == tasks.STATUS_DONE:
+                stats[team['name']] += task['priority'] * min(1, task['done_date'] - task['do_until'])/30
+                task_cnt += 1
+        try:
+            stats[team['name']] /= task_cnt
+        except ZeroDivisionError:
+            stats[team['name']] = 0
+    sorted_teams = [k for k, v in sorted(stats.items(), key=lambda item: item[1])][:10]
+    for i, team_name in enumerate(sorted_teams):
+        print(f"{i+1}. {team_name}")
+    input('Presione Enter para continuar...')
 
 def manage_teams():
     """
@@ -168,6 +186,7 @@ def manage_teams():
 
     actions = {"Agregar nueva equipo": create_team,
                "Manejar un equipo": manage_team,
+                "Ver equipos mas efectivos": print_top_teams,
                "Volver a inicio": go_begin}
 
     print("Elige accion que quieres hacer:")
@@ -175,8 +194,8 @@ def manage_teams():
     for i, action in enumerate(actions.keys()):
         print(f"{i + 1}: {action}")
     act = input()
-    while act not in ('1', '2', '3'):
-        print("Tiene que ingresar un numero entre 1 y 3\n")
+    while act not in ('1', '2', '3', '4'):
+        print("Tiene que ingresar un numero entre 1 y 4\n")
         print("elige accion que quieres hacer:")
 
         act = input()
@@ -194,6 +213,8 @@ def manage_teams():
         id = int(input())
         manage_team(id - 1)
     elif act == 3:
+        print_top_teams()
+    elif act == 4:
         go_begin()
     else:
         print("error. action incorrect")
