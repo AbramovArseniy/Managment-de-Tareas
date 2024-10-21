@@ -2,6 +2,7 @@ import json
 
 import src.teams.teams as teams
 import utils
+from src.datos import *
 
 task_tmpl = {
     'name':'',
@@ -23,7 +24,6 @@ statuses = {
     3: 'En Revision',
     4: 'Hecho',
 }
-tasks = utils.load_from_json('src/tasks/tasks.json')
 
 
 def new_task(name, desc, prio):

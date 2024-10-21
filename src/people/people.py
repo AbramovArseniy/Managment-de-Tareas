@@ -1,4 +1,4 @@
-import utils
+from src.datos import *
 
 
 specializations = {
@@ -8,7 +8,6 @@ specializations = {
     4: 'Team lid',
 }
 
-people = utils.load_from_json('src/people/people.json')
 
 
 def create_person():
@@ -63,6 +62,7 @@ def manage_people():
     utils.clear_console()
     actions = {"Agregar una persona": create_person,
                "Manejar una persona": manage_person,
+               "Ver la lista de personas": show_people,
                "Volver a inicio": go_begin}
 
     print("elige accion que quieres hacer:")
@@ -71,7 +71,7 @@ def manage_people():
         print(f"{i + 1}: {action}")
 
     act = input()
-    while act not in ('1', '2', '3'):
+    while act not in ('1', '2', '3', '4'):
         print("Tiene que ingresar un numero entre 1 y 3\n")
         print("elige accion que quieres hacer: ")
 
@@ -94,6 +94,8 @@ def manage_people():
         id = int(id)
         manage_person(id - 1)
     elif act == 3:
+        show_people()
+    elif act == 4:
         go_begin()
     else:
         print("error")
@@ -160,12 +162,17 @@ def manage_person(id):
     action(id)
 
 
-def print_person(person):
+def show_people():
+    utils.clear_console()
+    print("Lista de personas:")
+    for person in people:
+        print(show_person(person))
+        print("------------")
+
+
+def show_person(person):
     """
         Imprime la información detallada de una persona.
     """
-    utils.clear_console()
     for s in person.keys():
         print(f"{s}: {person[s]} ")
-
-

@@ -1,7 +1,5 @@
-import utils
-from src.people.people import people, print_person
-
-teams = utils.load_from_json('src/teams/teams.json')
+from src.datos import *
+from src.people.people import show_person
 
 
 def create_team():
@@ -22,7 +20,7 @@ def create_team():
 
         for i, person in enumerate(filtered_people):
             print(i + 1, end=".\n")
-            print_person(person)
+            show_person(person)
             print("----------------")
 
         person_id = input("Elige numero de persona que quiere agregar a su equipo: ")
@@ -95,7 +93,7 @@ def add_person_to_team(team_id):
     filtered_people = list(filter(lambda x: x not in teams[team_id]['persons'], people))
     for i, person in enumerate(filtered_people):
         print(i + 1, end=".\n")
-        print_person(person)
+        show_person(person)
         print("----------------")
 
     person_id = input("Elige numero de person que quiere agregar a su equipo: ")
@@ -108,7 +106,7 @@ def add_person_to_team(team_id):
         print("Numero incorrecto")
         return 0
 
-    print(print_person(filtered_people[person_id - 1]), "\n Esta persona se ha añadido al equipo")
+    print(show_person(filtered_people[person_id - 1]), "\n Esta persona se ha añadido al equipo")
 
 
 def show_team(team_id):
@@ -119,11 +117,12 @@ def show_team(team_id):
     print("Equipo: ", teams[team_id]['name'])
     print("Miembros del equipo:")
     for person in teams[team_id]['persons']:
-        print_person(person)
+        show_person(person)
         print("----------------")
 
 
 def show_teams():
+    print("Lista de tus comandos:")
     for id in range(len(teams)):
         show_team(id)
 
