@@ -175,31 +175,41 @@ def print_top_teams():
 
 
 def show_team_stats(team_id):
-    done_in_months = []
+    done_per_month = []
+    late_per_month = []
     months = []
     sorted_tasks = sorted(filter(lambda task: task['team'] == teams[team_id] and task['status'] == tasks.STATUS_DONE  and datetime.today() - task['done_at'] <= timedelta(days=366), tasks.tasks), key=lambda task: task['done_at'])
     if len(sorted_tasks) == 0:
         print('Ese equipo todavia no hizo tareas')
         return
     plt.rcParams.update({'font.size': 7})
-    cnt = 0
+    cnt_done = 0
+    cnt_late = 0
     cur_month = sorted_tasks[0]['done_at'].month
     cur_year = sorted_tasks[0]['done_at'].year
     months.append(f'{calendar.month_name[cur_month]},\n{cur_year}')
     for task in sorted_tasks:
-        if task['done_at'].month == cur_month and task['done_at'].year == cur_year:
-            cnt += 1
-        else:
-            done_in_months.append(cnt)
+        if task['done_at'].month != cur_month or task['done_at'].year != cur_year:
+            done_per_month.append(cnt_done)
+            late_per_month.append(cnt_late)
             cur_year += cur_month // 12
             cur_month = cur_month % 12 + 1
             months.append(f'{calendar.month_name[cur_month]},\n{cur_year}')
-            cnt = 0
-    done_in_months.append(cnt)
-    plt.plot(months, done_in_months)
+            cnt_done = 0
+            cnt_late = 0
+        cnt_done += 1
+        if task['done_at'] > task['do_until']:
+            cnt_late += 1
+
+
+    done_per_month.append(cnt_done)
+    late_per_month.append(cnt_late)
+    plt.plot(months, done_per_month)
+    plt.plot(months, late_per_month)
     plt.title('Tareas Hechas')
     plt.xlabel('Mes')
     plt.ylabel('Cantidad de Tareas')
+    plt.legend(['Tareas hechas', 'Hecho con Retraso'])
     plt.show()
 
 
