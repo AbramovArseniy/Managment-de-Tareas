@@ -1,9 +1,11 @@
 from src.people.people import people, print_person
 import src.tasks.tasks as tasks
+from matplotlib import pyplot as plt
+from datetime import datetime, timedelta
 import utils
+import calendar
 
 teams = []
-
 
 def create_team():
     """
@@ -132,6 +134,7 @@ def manage_team(team_id):
     actions = {"borrar equipo": remove_team,
                "cambiar nombre de equipo": change_team_name,
                "agregar nueva persona ": add_person_to_team,
+               "ver estadistica": show_team_stats,
                "volver a inicio": go_begin}
 
     print("elige accion que quieres hacer:")
@@ -151,6 +154,7 @@ def manage_team(team_id):
     action = actions[list(actions.keys())[act - 1]]
     action(team_id)
 
+
 def print_top_teams():
     stats = {}
     for team in teams:
@@ -158,7 +162,7 @@ def print_top_teams():
         task_cnt = 0
         for task in tasks.tasks:
             if task['team'] == team and task['status'] == tasks.STATUS_DONE:
-                stats[team['name']] += task['priority'] * min(1, task['done_date'] - task['do_until'])/30
+                stats[team['name']] += task['priority'] * min(1, task['done_at'] - task['do_until'])/30
                 task_cnt += 1
         try:
             stats[team['name']] /= task_cnt
@@ -168,6 +172,36 @@ def print_top_teams():
     for i, team_name in enumerate(sorted_teams):
         print(f"{i+1}. {team_name}")
     input('Presione Enter para continuar...')
+
+
+def show_team_stats(team_id):
+    done_in_months = []
+    months = []
+    sorted_tasks = sorted(filter(lambda task: task['team'] == teams[team_id] and task['status'] == tasks.STATUS_DONE  and datetime.today() - task['done_at'] <= timedelta(days=366), tasks.tasks), key=lambda task: task['done_at'])
+    if len(sorted_tasks) == 0:
+        print('Ese equipo todavia no hizo tareas')
+        return
+    plt.rcParams.update({'font.size': 7})
+    cnt = 0
+    cur_month = sorted_tasks[0]['done_at'].month
+    cur_year = sorted_tasks[0]['done_at'].year
+    months.append(f'{calendar.month_name[cur_month]},\n{cur_year}')
+    for task in sorted_tasks:
+        if task['done_at'].month == cur_month and task['done_at'].year == cur_year:
+            cnt += 1
+        else:
+            done_in_months.append(cnt)
+            cur_year += cur_month // 12
+            cur_month = cur_month % 12 + 1
+            months.append(f'{calendar.month_name[cur_month]},\n{cur_year}')
+            cnt = 0
+    done_in_months.append(cnt)
+    plt.plot(months, done_in_months)
+    plt.title('Tareas Hechas')
+    plt.xlabel('Mes')
+    plt.ylabel('Cantidad de Tareas')
+    plt.show()
+
 
 def manage_teams():
     """

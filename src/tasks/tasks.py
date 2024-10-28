@@ -52,7 +52,7 @@ def new_task(name, desc, prio):
         'status': STATUS_TO_ASSIGN,
         'team': {'name': 'No assignada'},
         'do_until': datetime.max(),
-        'done_date': ''
+        'done_at': ''
     }
     return task
 
@@ -315,7 +315,7 @@ def change_task():
         new_status = int(new_status)
         task['status'] = int(new_status)
         if new_status == STATUS_DONE:
-            task['done_date'] = datetime.now()
+            task['done_at'] = datetime.now()
 
     elif cmd == '5':
         is_valid = False
