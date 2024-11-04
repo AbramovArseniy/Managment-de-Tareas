@@ -166,7 +166,7 @@ def show_people():
     utils.clear_console()
     print("Lista de personas:")
     for person in people:
-        print(show_person(person))
+        show_person(person)
         print("------------")
 
 
@@ -174,5 +174,6 @@ def show_person(person):
     """
         Imprime la información detallada de una persona.
     """
-    for s in person.keys():
+
+    for s in person:
         print(f"{s}: {person[s]} ")
