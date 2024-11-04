@@ -96,7 +96,7 @@ def assign_team():
        Permite al usuario elegir una tarea y asignarla a un equipo.
     """
     utils.clear_console()
-    if len(teams.teams) == 0:
+    if len(teams) == 0:
         print('Primero tiene que crear un equipo')
         return
     task_id = choose_task()

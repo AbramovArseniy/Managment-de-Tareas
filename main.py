@@ -3,7 +3,13 @@ from src.people.people import manage_people, people
 from src.tasks.tasks import manage_tasks, tasks
 from src.teams.teams import manage_teams, teams
 
-
+"""
+добавить
+Рекурсия 
+тесты 
+диаграммы 
+фикс удаления данных
+"""
 def main():
     actions = {
         '1': manage_people,

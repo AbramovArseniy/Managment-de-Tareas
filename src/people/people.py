@@ -9,7 +9,6 @@ specializations = {
 }
 
 
-
 def create_person():
     """
         Crea una nueva persona solicitando al usuario el nombre, apellido, especialización y edad.
@@ -19,20 +18,24 @@ def create_person():
         Returns:
             dict: La persona creada.
     """
+
     utils.clear_console()
-    name = input('Ingrese nombre de la persona: ')
-    surname = input('Ingrese apellido de la persona: ')
-    for s in specializations.keys():
-        print(f"{s}: {specializations[s]}")
+    try:
+        name = input('Ingrese nombre de la persona: ')
+        surname = input('Ingrese apellido de la persona: ')
+        for s in specializations.keys():
+            print(f"{s}: {specializations[s]}")
 
-    specialization = specializations[int(input(f'Ingrese numero de especialidad de la persona: '))]
+        specialization = specializations[int(input(f'Ingrese numero de especialidad de la persona: '))]
 
-    age = int(input(f'Ingrese edad de la persona: '))
+        age = int(input(f'Ingrese edad de la persona: '))
 
-    person = new_person(name, surname, age, specialization)
-    people.append(person)
-    print('Persona es guardada\n')
-    return person
+        person = new_person(name, surname, age, specialization)
+        people.append(person)
+        print('Persona es guardada\n')
+        return person
+    except:
+        print("Error al agregar la persona")
 
 
 def new_person(name, surname, age, specialization):
@@ -107,8 +110,28 @@ def remove_person(id):
         Elimina una persona de la lista 'people' basada en su ID.
     """
     utils.clear_console()
-    people.pop(id)
-    print("La persona borro")
+    persons_teams = [people[id] in team['persons'] for team in teams]
+    if True in persons_teams:
+        print("Esta persona está en el equipo")
+        while True:
+            n = input("desea borrarla ?\n"
+                      "1. Si\n"
+                      "2. No\n")
+            if n == "1":
+                for team_id, status in enumerate(persons_teams):
+                    if status:
+                        teams[team_id]['persons'].remove(people[id])
+
+                people.pop(id)
+                print("La persona borro")
+                return 0
+            if n == "2":
+                go_begin()
+            else:
+                print("Tiene que ingresar 1 o 2")
+    else:
+        people.pop(id)
+        print("La persona borro")
 
 
 def change_person_name(id):
