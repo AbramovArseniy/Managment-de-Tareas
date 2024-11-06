@@ -191,6 +191,7 @@ def show_people():
     for person in people:
         show_person(person)
         print("------------")
+    input("Presiona Enter para continuar...")
 
 
 def show_person(person):
