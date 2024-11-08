@@ -1,6 +1,9 @@
+from matplotlib import pyplot as plt
+from datetime import datetime, timedelta
+import utils
+import calendar
 from src.datos import *
 from src.people.people import show_person
-
 
 def create_team():
     """
@@ -136,6 +139,7 @@ def manage_team(team_id):
     actions = {"borrar equipo": remove_team,
                "cambiar nombre de equipo": change_team_name,
                "agregar nueva persona ": add_person_to_team,
+               "ver estadistica": show_team_stats,
                "Eliminar a una persona del equipo": remove_from_team,
                "volver a inicio": go_begin}
 
@@ -179,6 +183,64 @@ def remove_from_team(team_id):
     show_team(team_id)
 
 
+def print_top_teams():
+    stats = {}
+    for team in teams:
+        stats[team['name']] = 0
+        task_cnt = 0
+        for task in tasks.tasks:
+            if task['team'] == team and task['status'] == tasks.STATUS_DONE:
+                stats[team['name']] += task['priority'] * min(1, task['done_at'] - task['do_until'])/30
+                task_cnt += 1
+        try:
+            stats[team['name']] /= task_cnt
+        except ZeroDivisionError:
+            stats[team['name']] = 0
+    sorted_teams = [k for k, v in sorted(stats.items(), key=lambda item: item[1])][:10]
+    for i, team_name in enumerate(sorted_teams):
+        print(f"{i+1}. {team_name}")
+    input('Presione Enter para continuar...')
+
+
+def show_team_stats(team_id):
+    done_per_month = []
+    late_per_month = []
+    months = []
+    sorted_tasks = sorted(filter(lambda task: task['team'] == teams[team_id] and task['status'] == tasks.STATUS_DONE  and datetime.today() - task['done_at'] <= timedelta(days=366), tasks.tasks), key=lambda task: task['done_at'])
+    if len(sorted_tasks) == 0:
+        print('Ese equipo todavia no hizo tareas')
+        return
+    plt.rcParams.update({'font.size': 7})
+    cnt_done = 0
+    cnt_late = 0
+    cur_month = sorted_tasks[0]['done_at'].month
+    cur_year = sorted_tasks[0]['done_at'].year
+    months.append(f'{calendar.month_name[cur_month]},\n{cur_year}')
+    for task in sorted_tasks:
+        if task['done_at'].month != cur_month or task['done_at'].year != cur_year:
+            done_per_month.append(cnt_done)
+            late_per_month.append(cnt_late)
+            cur_year += cur_month // 12
+            cur_month = cur_month % 12 + 1
+            months.append(f'{calendar.month_name[cur_month]},\n{cur_year}')
+            cnt_done = 0
+            cnt_late = 0
+        cnt_done += 1
+        if task['done_at'] > task['do_until']:
+            cnt_late += 1
+
+
+    done_per_month.append(cnt_done)
+    late_per_month.append(cnt_late)
+    plt.plot(months, done_per_month)
+    plt.plot(months, late_per_month)
+    plt.title('Tareas Hechas')
+    plt.xlabel('Mes')
+    plt.ylabel('Cantidad de Tareas')
+    plt.legend(['Tareas hechas', 'Hecho con Retraso'])
+    plt.show()
+
+
 def manage_teams():
     """
         Gestiona los equipos, permitiendo agregar nuevos equipos, modificar equipos existentes o volver al inicio.
@@ -197,6 +259,7 @@ def manage_teams():
     actions = {"Agregar nueva equipo": create_team,
                "Manejar un equipo": manage_team,
                'Ver equipos': show_teams,
+               "Ver equipos mas efectivos": print_top_teams,
                "Volver a inicio": go_begin}
 
     print("Elige accion que quieres hacer:")
@@ -224,10 +287,14 @@ def manage_teams():
         manage_team(id - 1)
 
     elif act == 3:
-        show_teams()
+        print_top_teams()
 
     elif act == 4:
+        show_teams()
+
+    elif act == 5:
         go_begin()
+    
     else:
         print("error. action incorrect")
         return 0
