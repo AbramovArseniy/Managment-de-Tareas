@@ -154,9 +154,10 @@ def manage_team(team_id):
         print('incorrect numero de accion')
         return 0
     action = actions[list(actions.keys())[act - 1]]
-    if act == 4:
+    if act == 5:
         go_begin()
-    action(team_id)
+    else:
+        action(team_id)
 
 
 def remove_from_team(team_id):
