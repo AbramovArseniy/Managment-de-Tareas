@@ -1,6 +1,8 @@
-import src.teams.teams as teams
+import json
+
 import utils
 from datetime import datetime
+from src.datos import *
 
 task_tmpl = {
     'name':'',
@@ -32,9 +34,6 @@ statuses = {
     3: 'En Revision',
     4: 'Hecho',
 }
-
-tasks = []
-
 
 def new_task(name, desc, prio):
     """
@@ -108,7 +107,7 @@ def assign_team():
        Permite al usuario elegir una tarea y asignarla a un equipo.
     """
     utils.clear_console()
-    if len(teams.teams) == 0:
+    if len(teams) == 0:
         print('Primero tiene que crear un equipo')
         return
     task_id = choose_task()

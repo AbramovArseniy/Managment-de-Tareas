@@ -1,4 +1,4 @@
-import utils
+from src.datos import *
 
 
 specializations = {
@@ -7,8 +7,6 @@ specializations = {
     3: 'Junior programador',
     4: 'Team lid',
 }
-
-people = []
 
 
 def create_person():
@@ -20,20 +18,24 @@ def create_person():
         Returns:
             dict: La persona creada.
     """
+
     utils.clear_console()
-    name = input('Ingrese nombre de la persona: ')
-    surname = input('Ingrese apellido de la persona: ')
-    for s in specializations.keys():
-        print(f"{s}: {specializations[s]}")
+    try:
+        name = input('Ingrese nombre de la persona: ')
+        surname = input('Ingrese apellido de la persona: ')
+        for s in specializations.keys():
+            print(f"{s}: {specializations[s]}")
 
-    specialization = specializations[int(input(f'Ingrese numero de especialidad de la persona: '))]
+        specialization = specializations[int(input(f'Ingrese numero de especialidad de la persona: '))]
 
-    age = int(input(f'Ingrese edad de la persona: '))
+        age = int(input(f'Ingrese edad de la persona: '))
 
-    person = new_person(name, surname, age, specialization)
-    people.append(person)
-    print('Persona es guardada\n')
-    return person
+        person = new_person(name, surname, age, specialization)
+        people.append(person)
+        print('Persona es guardada\n')
+        return person
+    except:
+        print("Error al agregar la persona")
 
 
 def new_person(name, surname, age, specialization):
@@ -63,6 +65,7 @@ def manage_people():
     utils.clear_console()
     actions = {"Agregar una persona": create_person,
                "Manejar una persona": manage_person,
+               "Ver la lista de personas": show_people,
                "Volver a inicio": go_begin}
 
     print("elige accion que quieres hacer:")
@@ -71,7 +74,7 @@ def manage_people():
         print(f"{i + 1}: {action}")
 
     act = input()
-    while act not in ('1', '2', '3'):
+    while act not in ('1', '2', '3', '4'):
         print("Tiene que ingresar un numero entre 1 y 3\n")
         print("elige accion que quieres hacer: ")
 
@@ -94,6 +97,8 @@ def manage_people():
         id = int(id)
         manage_person(id - 1)
     elif act == 3:
+        show_people()
+    elif act == 4:
         go_begin()
     else:
         print("error")
@@ -105,8 +110,28 @@ def remove_person(id):
         Elimina una persona de la lista 'people' basada en su ID.
     """
     utils.clear_console()
-    people.pop(id)
-    print("La persona borro")
+    persons_teams = [people[id] in team['persons'] for team in teams]
+    if True in persons_teams:
+        print("Esta persona está en el equipo")
+        while True:
+            n = input("desea borrarla ?\n"
+                      "1. Si\n"
+                      "2. No\n")
+            if n == "1":
+                for team_id, status in enumerate(persons_teams):
+                    if status:
+                        teams[team_id]['persons'].remove(people[id])
+
+                people.pop(id)
+                print("La persona borro")
+                return 0
+            if n == "2":
+                go_begin()
+            else:
+                print("Tiene que ingresar 1 o 2")
+    else:
+        people.pop(id)
+        print("La persona borro")
 
 
 def change_person_name(id):
@@ -160,12 +185,19 @@ def manage_person(id):
     action(id)
 
 
-def print_person(person):
+def show_people():
+    utils.clear_console()
+    print("Lista de personas:")
+    for person in people:
+        show_person(person)
+        print("------------")
+    input("Presiona Enter para continuar...")
+
+
+def show_person(person):
     """
         Imprime la información detallada de una persona.
     """
-    utils.clear_console()
-    for s in person.keys():
+
+    for s in person:
         print(f"{s}: {person[s]} ")
-
-
