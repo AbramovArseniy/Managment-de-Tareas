@@ -1,7 +1,8 @@
 import json
 
-import src.teams.teams as teams
 import utils
+from datetime import datetime
+from src.datos import *
 
 task_tmpl = {
     'name':'',
@@ -9,7 +10,12 @@ task_tmpl = {
     'priority':'', # Baja, Media, Alta
     'status':'', # Para Asignar, En Progreso, En Revision, Hecho
     'team': None,
+    'do_until': ''
 }
+
+PRIORITY_LOW = 1
+PRIORITY_MEDIUM = 2
+PRIORITY_HIGH = 3
 
 priorities = {
     1: 'Baja',
@@ -17,14 +23,17 @@ priorities = {
     3: 'Alta'
 }
 
+STATUS_TO_ASSIGN = 1
+STATUS_IN_PROGRESS = 2
+STATUS_IN_REVIEW = 3
+STATUS_DONE = 4
+
 statuses = {
     1: 'Para Asignar',
     2: 'En Progreso',
     3: 'En Revision',
     4: 'Hecho',
 }
-tasks = utils.load_from_json('src/tasks/tasks.json')
-
 
 def new_task(name, desc, prio):
     """
@@ -39,8 +48,10 @@ def new_task(name, desc, prio):
         'name': name,
         'description': desc,
         'priority': prio,
-        'status': 1,
-        'team':{'name': 'No assignada'}
+        'status': STATUS_TO_ASSIGN,
+        'team': {'name': 'No assignada'},
+        'do_until': datetime.max.strftime("%d/%m/%Y"),
+        'done_at': ''
     }
     return task
 
@@ -96,19 +107,19 @@ def assign_team():
        Permite al usuario elegir una tarea y asignarla a un equipo.
     """
     utils.clear_console()
-    if len(teams.teams) == 0:
+    if len(teams) == 0:
         print('Primero tiene que crear un equipo')
         return
     task_id = choose_task()
-    for i, team in enumerate(teams.teams):
+    for i, team in enumerate(teams):
         print(f"{i + 1}: {team['name']}")
 
     print("Ingrese el número del equipo a que desea assingar la tarea")
     team_id = input()
-    while team_id not in map(str, range(1, len(teams.teams) + 1)):
+    while team_id not in map(str, range(1, len(teams) + 1)):
         print('Id no es valido')
         team_id = input()
-    tasks[task_id]['team'] = teams.teams[int(team_id) - 1]
+    tasks[task_id]['team'] = teams[int(team_id) - 1]
     tasks[task_id]['status'] = 2
 
 
@@ -122,6 +133,9 @@ def create_task():
     """
     utils.clear_console()
     name = input('Ingrese nombre de la tarea: ')
+    while name == '':
+        print("El nombre no puede ser vacio")
+        name = input('Ingrese nombre de la tarea: ')
     desc = input('Ingrese descripcion de la tarea: ')
     prio = input('Ingrese prioridad de su tarea:\n1. Baja\n2. Media\n3. Alta\n')
     while prio not in ('1', '2', '3'):
@@ -150,15 +164,12 @@ def print_tasks(filter_func=lambda task: True):
     while i >= 0 and i < num_tasks:
         for id, task in enumerate(filtered_tasks[i:min(i + 10, num_tasks)]):
             print(f'Id: {tasks.index(task) + 1}\n'
-                  f'Nombre: {task["name"]}\n'
-                  f'Prioridad: {priorities[task["priority"]]}\n'
-                  f'Estado: {statuses[task["status"]]}\n'
-                  f'Team: {task["team"]["name"]}\n')
+                  f'Nombre: {task["name"]}\n')
         print(f'Pagina {i//10 + 1}/{(num_tasks - 1)//10 + 1}')
         print('Ingrese:\n'
               '1. Ver proxima pagina\n'
               '2. Ver pagina previa\n'
-              '3. Eligir tarea')
+              '3. Continuar')
         cmd = input()
         if cmd not in ('1', '2', '3'):
             utils.clear_console()
@@ -211,15 +222,15 @@ def filter_tasks():
             status = input()
         print_tasks(lambda task: task['status'] == int(status))
     elif param == '3':
-        for i, team in enumerate(teams.teams):
+        for i, team in enumerate(teams):
             print(f"{i + 1}: {team['name']}")
 
         print("Ingrese el número del equipo")
         team_id = input()
-        while team_id not in map(str, range(1, len(teams.teams) + 1)):
+        while team_id not in map(str, range(1, len(teams) + 1)):
             print('Id no es valido')
             team_id = input()
-        print_tasks(lambda task: task['team'] == teams.teams[int(team_id) - 1])
+        print_tasks(lambda task: task['team'] == teams[int(team_id) - 1])
     elif param == '4':
         print_tasks()
 
@@ -278,9 +289,10 @@ def change_task():
                 "1. Nombre\n"
                 "2. Descripcion\n"
                 "3. Prioridad\n"
-                "4. Estado\n")
-    while cmd not in ('1', '2', '3', '4'):
-        print("Tiene que ingresar un numero entre 1 y 4")
+                "4. Estado\n"
+                "5. Hacer Antes de (Fecha)\n")
+    while cmd not in ('1', '2', '3', '4', '5'):
+        print("Tiene que ingresar un numero entre 1 y 5")
         cmd = input()
     if cmd == '1':
         new_name = input('Ingrese el nuevo nombre de la tarea: ')
@@ -298,13 +310,26 @@ def change_task():
         task['priority'] = int(new_prio)
 
     elif cmd == '4':
-        new_status = input('Ingrese el nuevo estado de la tarea:\n1. Para Asignar\n2. En Progreso\n3. En Revision\n4. Hecho\n 5. Para Eliminar\n')
-        while new_status not in ('1', '2', '3', '4', '5'):
-            print("Tiene que ingresar un numero entre 1 y 5")
+        new_status = input('Ingrese el nuevo estado de la tarea:\n1. Para Asignar\n2. En Progreso\n3. En Revision\n4. Hecho\n')
+        while new_status not in ('1', '2', '3', '4'):
+            print("Tiene que ingresar un numero entre 1 y 4")
             new_status = input()
-
+        new_status = int(new_status)
         task['status'] = int(new_status)
+        if new_status == STATUS_DONE:
+            task['done_at'] = datetime.now()
 
+    elif cmd == '5':
+        is_valid = False
+        while not is_valid:
+            new_date =  input('Ingrese la fecha en formato DD/MM/YYYY:')
+
+            try:
+                datetime.strptime(new_date, '%d/%m/%Y')
+                is_valid = True
+                task['do_until'] = new_date
+            except ValueError:
+                print('Formato de fecha es incorecto.')
 
 
 

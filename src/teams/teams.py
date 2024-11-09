@@ -1,8 +1,10 @@
+from matplotlib import pyplot as plt
+from datetime import datetime, timedelta
+import src.tasks.tasks
 import utils
-from src.people.people import people, print_person
-
-teams = utils.load_from_json('src/teams/teams.json')
-
+import calendar
+from src.datos import *
+from src.people.people import show_person
 
 def create_team():
     """
@@ -22,7 +24,7 @@ def create_team():
 
         for i, person in enumerate(filtered_people):
             print(i + 1, end=".\n")
-            print_person(person)
+            show_person(person)
             print("----------------")
 
         person_id = input("Elige numero de persona que quiere agregar a su equipo: ")
@@ -95,7 +97,7 @@ def add_person_to_team(team_id):
     filtered_people = list(filter(lambda x: x not in teams[team_id]['persons'], people))
     for i, person in enumerate(filtered_people):
         print(i + 1, end=".\n")
-        print_person(person)
+        show_person(person)
         print("----------------")
 
     person_id = input("Elige numero de person que quiere agregar a su equipo: ")
@@ -108,7 +110,7 @@ def add_person_to_team(team_id):
         print("Numero incorrecto")
         return 0
 
-    print(print_person(filtered_people[person_id - 1]), "\n Esta persona se ha añadido al equipo")
+    print(show_person(filtered_people[person_id - 1]), "\n Esta persona se ha añadido al equipo")
 
 
 def show_team(team_id):
@@ -119,13 +121,15 @@ def show_team(team_id):
     print("Equipo: ", teams[team_id]['name'])
     print("Miembros del equipo:")
     for person in teams[team_id]['persons']:
-        print_person(person)
+        show_person(person)
         print("----------------")
 
 
 def show_teams():
+    print("Lista de tus comandos:")
     for id in range(len(teams)):
         show_team(id)
+    input("Presiona Enter para continuar...")
 
 
 def manage_team(team_id):
@@ -136,6 +140,8 @@ def manage_team(team_id):
     actions = {"borrar equipo": remove_team,
                "cambiar nombre de equipo": change_team_name,
                "agregar nueva persona ": add_person_to_team,
+               "eliminar a una persona del equipo": remove_from_team,
+               "ver estadistica": show_team_stats,
                "volver a inicio": go_begin}
 
     print("elige accion que quieres hacer:")
@@ -143,7 +149,7 @@ def manage_team(team_id):
         print(f"{i + 1}: {action}")
 
     act = input()
-    while act not in ('1', '2', '3', '4'):
+    while act not in [str(i + 1) for i in range(len(actions.keys()))]:
         print("Tiene que ingresar un numero entre 1 y 4\n")
         print("elige accion que quieres hacer:")
         act = input()
@@ -153,9 +159,87 @@ def manage_team(team_id):
         print('incorrect numero de accion')
         return 0
     action = actions[list(actions.keys())[act - 1]]
-    if act == 4:
+    if act == 5:
         go_begin()
-    action(team_id)
+    else:
+        action(team_id)
+
+
+def remove_from_team(team_id):
+    utils.clear_console()
+    for id, person in enumerate(teams[team_id]['persons']):
+        print(id + 1, end=". ")
+        show_person(person)
+        print("---------")
+
+    n = input("Ingrese el número de la persona que desea eliminar del equipo.")
+    while n not in [str(i + 1) for i in range(len(teams[team_id]['persons']))]:
+        print("numero incorrecto")
+        n = input("Ingrese el número de la persona que desea eliminar del equipo")
+
+    teams[team_id]['persons'].pop(int(n) - 1)
+    utils.clear_console()
+    print("La persona ha sido eliminada del equipo con éxito")
+    print("Estado actual del equipo")
+    show_team(team_id)
+
+
+def print_top_teams():
+    stats = {}
+    for team in teams:
+        stats[team['name']] = 0
+        task_cnt = 0
+        for task in tasks:
+            if task['team'] == team and task['status'] == tasks.STATUS_DONE:
+                stats[team['name']] += task['priority'] * min(1, datetime.strptime(task['done_at'], "%d/%m/%Y") - datetime.strptime(task['do_until'], "%d/%m/%Y"))/30
+                task_cnt += 1
+        try:
+            stats[team['name']] /= task_cnt
+        except ZeroDivisionError:
+            stats[team['name']] = 0
+    sorted_teams = [k for k, v in sorted(stats.items(), key=lambda item: item[1])][:10]
+    for i, team_name in enumerate(sorted_teams):
+        print(f"{i+1}. {team_name}")
+    input('Presione Enter para continuar...')
+
+
+def show_team_stats(team_id):
+    done_per_month = []
+    late_per_month = []
+    months = []
+    sorted_tasks = sorted(filter(lambda task: task['team'] == teams[team_id] and task['status'] == tasks.STATUS_DONE  and datetime.today() - datetime.strptime(task['done_at'], "%d/%m/%Y") <= timedelta(days=366), tasks), key=lambda task: datetime.strptime(task['done_at'], "%d/%m/%Y"))
+    if len(sorted_tasks) == 0:
+        print('Ese equipo todavia no hizo tareas')
+        return
+    plt.rcParams.update({'font.size': 7})
+    cnt_done = 0
+    cnt_late = 0
+    cur_month = datetime.strptime(task['done_at'], "%d/%m/%Y").month
+    cur_year = datetime.strptime(task['done_at'], "%d/%m/%Y").year
+    months.append(f'{calendar.month_name[cur_month]},\n{cur_year}')
+    for task in sorted_tasks:
+        if datetime.strptime(task['done_at'], "%d/%m/%Y").month != cur_month or datetime.strptime(task['done_at'], "%d/%m/%Y").year != cur_year:
+            done_per_month.append(cnt_done)
+            late_per_month.append(cnt_late)
+            cur_year += cur_month // 12
+            cur_month = cur_month % 12 + 1
+            months.append(f'{calendar.month_name[cur_month]},\n{cur_year}')
+            cnt_done = 0
+            cnt_late = 0
+        cnt_done += 1
+        if datetime.strptime(task['done_at'], "%d/%m/%Y") > datetime.strptime(task['do_until'], "%d/%m/%Y"):
+            cnt_late += 1
+
+
+    done_per_month.append(cnt_done)
+    late_per_month.append(cnt_late)
+    plt.plot(months, done_per_month)
+    plt.plot(months, late_per_month)
+    plt.title('Tareas Hechas')
+    plt.xlabel('Mes')
+    plt.ylabel('Cantidad de Tareas')
+    plt.legend(['Tareas hechas', 'Hecho con Retraso'])
+    plt.show()
 
 
 def manage_teams():
@@ -176,6 +260,7 @@ def manage_teams():
     actions = {"Agregar nueva equipo": create_team,
                "Manejar un equipo": manage_team,
                'Ver equipos': show_teams,
+               "Ver equipos mas efectivos": print_top_teams,
                "Volver a inicio": go_begin}
 
     print("Elige accion que quieres hacer:")
@@ -203,10 +288,14 @@ def manage_teams():
         manage_team(id - 1)
 
     elif act == 3:
-        show_teams()
+        print_top_teams()
 
     elif act == 4:
+        show_teams()
+
+    elif act == 5:
         go_begin()
+    
     else:
         print("error. action incorrect")
         return 0
