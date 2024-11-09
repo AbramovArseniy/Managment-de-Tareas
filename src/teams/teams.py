@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from datetime import datetime, timedelta
+import src.tasks.tasks
 import utils
 import calendar
 from src.datos import *
@@ -139,8 +140,8 @@ def manage_team(team_id):
     actions = {"borrar equipo": remove_team,
                "cambiar nombre de equipo": change_team_name,
                "agregar nueva persona ": add_person_to_team,
+               "eliminar a una persona del equipo": remove_from_team,
                "ver estadistica": show_team_stats,
-               "Eliminar a una persona del equipo": remove_from_team,
                "volver a inicio": go_begin}
 
     print("elige accion que quieres hacer:")
@@ -188,9 +189,9 @@ def print_top_teams():
     for team in teams:
         stats[team['name']] = 0
         task_cnt = 0
-        for task in tasks.tasks:
+        for task in tasks:
             if task['team'] == team and task['status'] == tasks.STATUS_DONE:
-                stats[team['name']] += task['priority'] * min(1, task['done_at'] - task['do_until'])/30
+                stats[team['name']] += task['priority'] * min(1, datetime.strptime(task['done_at'], "%d/%m/%Y") - datetime.strptime(task['do_until'], "%d/%m/%Y"))/30
                 task_cnt += 1
         try:
             stats[team['name']] /= task_cnt
@@ -206,18 +207,18 @@ def show_team_stats(team_id):
     done_per_month = []
     late_per_month = []
     months = []
-    sorted_tasks = sorted(filter(lambda task: task['team'] == teams[team_id] and task['status'] == tasks.STATUS_DONE  and datetime.today() - task['done_at'] <= timedelta(days=366), tasks.tasks), key=lambda task: task['done_at'])
+    sorted_tasks = sorted(filter(lambda task: task['team'] == teams[team_id] and task['status'] == tasks.STATUS_DONE  and datetime.today() - datetime.strptime(task['done_at'], "%d/%m/%Y") <= timedelta(days=366), tasks), key=lambda task: datetime.strptime(task['done_at'], "%d/%m/%Y"))
     if len(sorted_tasks) == 0:
         print('Ese equipo todavia no hizo tareas')
         return
     plt.rcParams.update({'font.size': 7})
     cnt_done = 0
     cnt_late = 0
-    cur_month = sorted_tasks[0]['done_at'].month
-    cur_year = sorted_tasks[0]['done_at'].year
+    cur_month = datetime.strptime(task['done_at'], "%d/%m/%Y").month
+    cur_year = datetime.strptime(task['done_at'], "%d/%m/%Y").year
     months.append(f'{calendar.month_name[cur_month]},\n{cur_year}')
     for task in sorted_tasks:
-        if task['done_at'].month != cur_month or task['done_at'].year != cur_year:
+        if datetime.strptime(task['done_at'], "%d/%m/%Y").month != cur_month or datetime.strptime(task['done_at'], "%d/%m/%Y").year != cur_year:
             done_per_month.append(cnt_done)
             late_per_month.append(cnt_late)
             cur_year += cur_month // 12
@@ -226,7 +227,7 @@ def show_team_stats(team_id):
             cnt_done = 0
             cnt_late = 0
         cnt_done += 1
-        if task['done_at'] > task['do_until']:
+        if datetime.strptime(task['done_at'], "%d/%m/%Y") > datetime.strptime(task['do_until'], "%d/%m/%Y"):
             cnt_late += 1
 
 
