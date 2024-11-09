@@ -317,7 +317,7 @@ def change_task():
         new_status = int(new_status)
         task['status'] = int(new_status)
         if new_status == STATUS_DONE:
-            task['done_at'] = datetime.now()
+            task['done_at'] = datetime.now().strftime('%d/%m/%Y')
 
     elif cmd == '5':
         is_valid = False

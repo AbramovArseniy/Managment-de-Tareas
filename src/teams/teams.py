@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 from datetime import datetime, timedelta
-import src.tasks.tasks
+import src.tasks.tasks as tasks_mod
 import utils
 import calendar
 from src.datos import *
@@ -117,16 +117,16 @@ def show_team(team_id):
     """
        Muestra la información de un equipo específico, incluyendo su nombre y miembros.
     """
-    utils.clear_console()
     print("Equipo: ", teams[team_id]['name'])
     print("Miembros del equipo:")
     for person in teams[team_id]['persons']:
-        show_person(person)
-        print("----------------")
+        print(f'\t{person["name"]} {person["surname"]}')
+    print("----------------")
 
 
 def show_teams():
-    print("Lista de tus comandos:")
+    utils.clear_console()
+    print("Lista de tus equipos:")
     for id in range(len(teams)):
         show_team(id)
     input("Presiona Enter para continuar...")
@@ -150,7 +150,7 @@ def manage_team(team_id):
 
     act = input()
     while act not in [str(i + 1) for i in range(len(actions.keys()))]:
-        print("Tiene que ingresar un numero entre 1 y 4\n")
+        print("Tiene que ingresar un numero entre 1 y 6\n")
         print("elige accion que quieres hacer:")
         act = input()
 
@@ -159,7 +159,7 @@ def manage_team(team_id):
         print('incorrect numero de accion')
         return 0
     action = actions[list(actions.keys())[act - 1]]
-    if act == 5:
+    if act == 6:
         go_begin()
     else:
         action(team_id)
@@ -190,7 +190,7 @@ def print_top_teams():
         stats[team['name']] = 0
         task_cnt = 0
         for task in tasks:
-            if task['team'] == team and task['status'] == tasks.STATUS_DONE:
+            if task['team'] == team and task['status'] == tasks_mod.STATUS_DONE:
                 stats[team['name']] += task['priority'] * min(1, datetime.strptime(task['done_at'], "%d/%m/%Y") - datetime.strptime(task['do_until'], "%d/%m/%Y"))/30
                 task_cnt += 1
         try:
@@ -204,18 +204,22 @@ def print_top_teams():
 
 
 def show_team_stats(team_id):
+    print(team_id)
+    input()
     done_per_month = []
     late_per_month = []
     months = []
-    sorted_tasks = sorted(filter(lambda task: task['team'] == teams[team_id] and task['status'] == tasks.STATUS_DONE  and datetime.today() - datetime.strptime(task['done_at'], "%d/%m/%Y") <= timedelta(days=366), tasks), key=lambda task: datetime.strptime(task['done_at'], "%d/%m/%Y"))
+    sorted_tasks = sorted(filter(lambda task: task['team']['name'] == teams[team_id]['name'] and task['status'] == tasks_mod.STATUS_DONE  and datetime.today() - datetime.strptime(task['done_at'], "%d/%m/%Y") <= timedelta(days=366), tasks), key=lambda task: datetime.strptime(task['done_at'], "%d/%m/%Y"))
+    print(sorted_tasks)
+    input()
     if len(sorted_tasks) == 0:
         print('Ese equipo todavia no hizo tareas')
         return
     plt.rcParams.update({'font.size': 7})
     cnt_done = 0
     cnt_late = 0
-    cur_month = datetime.strptime(task['done_at'], "%d/%m/%Y").month
-    cur_year = datetime.strptime(task['done_at'], "%d/%m/%Y").year
+    cur_month = datetime.strptime(sorted_tasks[0]['done_at'], "%d/%m/%Y").month
+    cur_year = datetime.strptime(sorted_tasks[0]['done_at'], "%d/%m/%Y").year
     months.append(f'{calendar.month_name[cur_month]},\n{cur_year}')
     for task in sorted_tasks:
         if datetime.strptime(task['done_at'], "%d/%m/%Y").month != cur_month or datetime.strptime(task['done_at'], "%d/%m/%Y").year != cur_year:
@@ -268,8 +272,8 @@ def manage_teams():
     for i, action in enumerate(actions.keys()):
         print(f"{i + 1}: {action}")
     act = input()
-    while act not in ('1', '2', '3', '4'):
-        print("Tiene que ingresar un numero entre 1 y 4\n")
+    while act not in ('1', '2', '3', '4', '5'):
+        print("Tiene que ingresar un numero entre 1 y 5\n")
         print("elige accion que quieres hacer:")
 
         act = input()
@@ -288,10 +292,11 @@ def manage_teams():
         manage_team(id - 1)
 
     elif act == 3:
-        print_top_teams()
+        show_teams()
 
     elif act == 4:
-        show_teams()
+
+        print_top_teams()
 
     elif act == 5:
         go_begin()
