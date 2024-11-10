@@ -1,3 +1,5 @@
+from src.datos import *
+import src.datos as dt
 import utils
 
 
@@ -7,8 +9,6 @@ specializations = {
     3: 'Junior programador',
     4: 'Team lid',
 }
-
-people = utils.load_from_json('src/people/people.json')
 
 
 def create_person():
@@ -20,23 +20,28 @@ def create_person():
         Returns:
             dict: La persona creada.
     """
+
     utils.clear_console()
-    name = input('Ingrese nombre de la persona: ')
-    surname = input('Ingrese apellido de la persona: ')
-    for s in specializations.keys():
-        print(f"{s}: {specializations[s]}")
+    try:
+        name = input('Ingrese nombre completo de la persona: ')
+        for s in specializations.keys():
+            print(f"{s}: {specializations[s]}")
 
-    specialization = specializations[int(input(f'Ingrese numero de especialidad de la persona: '))]
+        specialization = specializations[int(input(f'Ingrese numero de especialidad de la persona: '))]
 
-    age = int(input(f'Ingrese edad de la persona: '))
+        age = int(input(f'Ingrese edad de la persona: '))
 
-    person = new_person(name, surname, age, specialization)
-    people.append(person)
-    print('Persona es guardada\n')
-    return person
+        person = new_person(name, age, specialization)
+        people[str(people_next_id)] = person
+        dt.people_next_id += 1
+        print('Persona es guardada\n')
+        return person
+    except:
+        print("Error al agregar la persona")
+        input("Presiona Enter para continuar...")
 
 
-def new_person(name, surname, age, specialization):
+def new_person(name, age, specialization):
     """
         Crea un diccionario con los detalles de una persona.
 
@@ -46,11 +51,9 @@ def new_person(name, surname, age, specialization):
     utils.clear_console()
     person = {
         'name': name,
-        'surname': surname,
         'age': age,
         'specialization': specialization,
     }
-
     return person
 
 
@@ -61,17 +64,18 @@ def manage_people():
        Solicita al usuario que elija una acción y llama a la función correspondiente.
     """
     utils.clear_console()
-    actions = {"Agregar una persona": create_person,
-               "Manejar una persona": manage_person,
-               "Volver a inicio": go_begin}
+    actions = ["Agregar una persona",
+               "Manejar una persona",
+               "Ver la lista de personas",
+               "Volver a inicio"]
 
     print("elige accion que quieres hacer:")
 
-    for i, action in enumerate(actions.keys()):
+    for i, action in enumerate(actions):
         print(f"{i + 1}: {action}")
 
     act = input()
-    while act not in ('1', '2', '3'):
+    while act not in ('1', '2', '3', '4'):
         print("Tiene que ingresar un numero entre 1 y 3\n")
         print("elige accion que quieres hacer: ")
 
@@ -82,31 +86,44 @@ def manage_people():
     if act == 1:
         create_person()
     elif act == 2:
-        print("Ingrese numero de persona que desea modificar ")
-        for i, person in enumerate(people):
-            print(f"{i + 1}: {person['name']} {person['surname']}")
-        id = input()
-        while id not in [str(i) for i in range(1, len(people) + 1)]:
-            print(f"Tiene que ingresar un numero entre 1 y {len(people)}\n")
-            print("Ingrese numero de persona que desea modificar ")
-
-            id = input()
-        id = int(id)
-        manage_person(id - 1)
+        id = utils.choose_id(people, "Ingrese numero de persona que desea modificar ")
+        manage_person(id)
     elif act == 3:
+        utils.print_dict(people)
+    elif act == 4:
         go_begin()
     else:
         print("error")
         return 0
 
 
-def remove_person(id):
+def remove_person(person_id):
     """
         Elimina una persona de la lista 'people' basada en su ID.
     """
     utils.clear_console()
-    people.pop(id)
-    print("La persona borro")
+    persons_teams = [person_id in team['person_ids'] for id, team in teams]
+    if True in persons_teams:
+        print("Esta persona está en el equipo")
+        while True:
+            n = input("desea borrarla ?\n"
+                      "1. Si\n"
+                      "2. No\n")
+            if n == "1":
+                for team_id, status in enumerate(persons_teams):
+                    if status:
+                        teams[team_id]['person_ids'].remove(person_id)
+
+                people.pop(person_id)
+                print("La persona borro")
+                return 0
+            if n == "2":
+                go_begin()
+            else:
+                print("Tiene que ingresar 1 o 2")
+    else:
+        people.pop(person_id)
+        print("La persona borro")
 
 
 def change_person_name(id):
@@ -117,16 +134,6 @@ def change_person_name(id):
     name = input("Ingrese nuevo nombre de persona: ")
     people[id]['name'] = name
     print(f"El nuevo nombre de persona es {name}")
-
-
-def change_person_surname(id):
-    """
-        Cambia el apellido de una persona en la lista 'people'.
-    """
-    utils.clear_console()
-    surname = input("Ingrese nuevo nombre de persona: ")
-    people[id]['surname'] = surname
-    print(f"El nuevo apellido de persona es {surname}")
 
 
 def go_begin(*args):
@@ -143,7 +150,6 @@ def manage_person(id):
     utils.clear_console()
     actions = {"borrar": remove_person,
                "cambiar nombre": change_person_name,
-               "cambiar apellido": change_person_surname,
                "volver a inicio": go_begin}
 
     print("elige accion que quieres hacer:")
@@ -151,8 +157,8 @@ def manage_person(id):
         print(f"{i + 1}: {action}")
 
     act = input()
-    while act not in ('1', '2', '3', '4'):
-        print("Tiene que ingresar un numero entre 1 y 4\n")
+    while act not in ('1', '2', '3'):
+        print("Tiene que ingresar un numero entre 1 y 3\n")
         print("elige accion que quieres hacer:")
 
         act = input()
@@ -160,12 +166,10 @@ def manage_person(id):
     action(id)
 
 
-def print_person(person):
+def show_person(person):
     """
         Imprime la información detallada de una persona.
     """
-    utils.clear_console()
-    for s in person.keys():
-        print(f"{s}: {person[s]} ")
-
-
+    print(f"Nombre: {person['name']}\n"
+          f"Specializacion: {person['specialization']}\n"
+          f"Edad: {person['age']}")
