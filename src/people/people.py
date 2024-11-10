@@ -75,7 +75,7 @@ def manage_people():
 
     act = input()
     while act not in ('1', '2', '3', '4'):
-        print("Tiene que ingresar un numero entre 1 y 3\n")
+        print("Tiene que ingresar un numero entre 1 y 4\n")
         print("elige accion que quieres hacer: ")
 
         act = input()

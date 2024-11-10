@@ -1,7 +1,4 @@
-import json
-
 import src.teams.teams as teams
-import utils
 from src.datos import *
 
 task_tmpl = {
@@ -71,6 +68,7 @@ def manage_tasks():
         print("Tiene que ingresar un numero entre 1 y 4")
         cmd = input()
     actions[cmd]()
+
 
 def manage_task():
     utils.clear_console()
@@ -147,6 +145,7 @@ def print_tasks(filter_func=lambda task: True):
         return
     num_tasks = len(filtered_tasks)
     i = 0
+
     while i >= 0 and i < num_tasks:
         for id, task in enumerate(filtered_tasks[i:min(i + 10, num_tasks)]):
             print(f'Id: {tasks.index(task) + 1}\n'
