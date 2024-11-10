@@ -72,6 +72,7 @@ def manage_tasks():
         cmd = input()
     actions[cmd]()
 
+
 def manage_task():
     utils.clear_console()
     if len(tasks) == 0:
@@ -110,7 +111,6 @@ def assign_team():
         team_id = input()
     tasks[task_id]['team'] = teams.teams[int(team_id) - 1]
     tasks[task_id]['status'] = 2
-
 
 
 

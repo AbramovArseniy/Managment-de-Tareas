@@ -48,7 +48,7 @@ def new_person(name, surname, age, specialization):
         'name': name,
         'surname': surname,
         'age': age,
-        'specialization': specialization,  # Baja, Media, Alta
+        'specialization': specialization,
     }
 
     return person
