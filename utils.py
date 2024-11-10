@@ -1,4 +1,5 @@
 import os
+
 import utils
 
 
@@ -28,6 +29,7 @@ def choose_id(d,  input_msg = "Ingrese el Id: "):
         print("Id no es valido")
         id = input("Ingrese el Id: ")
     return id
+
 
 def print_dict(d, filter_func=lambda item: True):
     utils.clear_console()

@@ -7,6 +7,7 @@ from src.datos import *
 import src.datos as dt
 from src.people.people import show_person
 
+
 def create_team():
     """
         Crea un nuevo equipo solicitando al usuario un nombre y añadiendo personas al equipo.
@@ -211,7 +212,6 @@ def show_team_stats(team_id):
         if datetime.strptime(task['done_at'], "%d/%m/%Y") > datetime.strptime(task['do_until'], "%d/%m/%Y"):
             cnt_late += 1
 
-
     done_per_month.append(cnt_done)
     late_per_month.append(cnt_late)
     plt.plot(months, done_per_month)
@@ -253,7 +253,6 @@ def manage_teams():
         if len(teams) == 0:
             print("En primer lugar, cree un nuevo equipo ")
             return 0
-
 
         id = utils.choose_id(teams, "Ingrese el número del equipo que desea modificar: ")
         manage_team(id)

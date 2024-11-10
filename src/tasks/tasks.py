@@ -1,9 +1,7 @@
-import json
-
-import utils
 from datetime import datetime
-from src.datos import *
+
 import src.datos as dt
+from src.datos import *
 
 task_tmpl = {
     'name':'',
@@ -35,6 +33,7 @@ statuses = {
     3: 'En Revision',
     4: 'Hecho',
 }
+
 
 def new_task(name, desc, prio):
     """
@@ -83,6 +82,7 @@ def manage_tasks():
         print("Tiene que ingresar un numero entre 1 y 4")
         cmd = input()
     actions[cmd]()
+
 
 def manage_task():
     utils.clear_console()
@@ -179,7 +179,6 @@ def filter_tasks():
     elif param == '4':
         utils.print_dict(tasks)
 
-
     id = input('Ingrese Id de tarea para ver mas informacion o -1 para volver al inicio: ')
     while id not in tasks.keys() and id != '-1':
         id = input('Id no es valido. Ingrese otra: ')
@@ -258,7 +257,6 @@ def change_task():
                 task['do_until'] = new_date
             except ValueError:
                 print('Formato de fecha es incorecto.')
-
 
 
 def print_task_info(task):
