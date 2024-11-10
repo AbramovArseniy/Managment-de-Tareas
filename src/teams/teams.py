@@ -125,6 +125,7 @@ def show_teams():
     print("Lista de tus comandos:")
     for id in range(len(teams)):
         show_team(id)
+    input("Presiona Enter para continuar...")
 
 
 def manage_team(team_id):
