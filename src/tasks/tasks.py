@@ -8,7 +8,7 @@ task_tmpl = {
     'description':'',
     'priority':'', # Baja, Media, Alta
     'status':'', # Para Asignar, En Progreso, En Revision, Hecho
-    'team': None,
+    'team_id': None,
     'do_until': ''
 }
 
@@ -49,7 +49,7 @@ def new_task(name, desc, prio):
         'description': desc,
         'priority': prio,
         'status': STATUS_TO_ASSIGN,
-        'team': '-1',
+        'team_id': '-1',
         'do_until': datetime.max.strftime("%d/%m/%Y"),
         'done_at': ''
     }

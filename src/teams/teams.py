@@ -66,6 +66,9 @@ def remove_team(team_id):
     """
     utils.clear_console()
     teams.pop(team_id)
+    for id, task in tasks:
+        if task['team_id'] == team_id:
+            tasks[id]['team_id'] = -1
     print("El equipo borro")
 
 

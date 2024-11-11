@@ -102,7 +102,8 @@ def remove_person(person_id):
         Elimina una persona de la lista 'people' basada en su ID.
     """
     utils.clear_console()
-    persons_teams = [person_id in team['person_ids'] for id, team in teams]
+    print(teams)
+    persons_teams = [person_id in team['person_ids'] for team in teams.values()]
     if True in persons_teams:
         print("Esta persona está en el equipo")
         while True:

@@ -1,1 +1,1 @@
-{"1": {"name": "123", "person_ids": ["1", "2"]}, "-1": {"name": "No assingada"}, "-1": {"name": "No assingada"}}
+{"1": {"name": "123", "person_ids": ["1", "2"]}, "-1": {"name": "No assingada", "person_ids": []}}
