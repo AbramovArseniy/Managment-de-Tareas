@@ -172,8 +172,8 @@ def filter_tasks():
             status = input()
         utils.print_dict(tasks, lambda task: task[1]['status'] == int(status))
     elif param == '3':
-        for id, team in teams:
-            print(f"{id}: {team['name']}")
+        for id in teams.keys():
+            print(f"{id}: {teams[id]['name']}")
         team_id = utils.choose_id(teams, "Ingrese el número del equipo")
         utils.print_dict(tasks, lambda task: task[1]['team_id'] == team_id)
     elif param == '4':
