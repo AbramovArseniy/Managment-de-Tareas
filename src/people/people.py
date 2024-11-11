@@ -52,7 +52,7 @@ def new_person(name, age, specialization):
     person = {
         'name': name,
         'age': age,
-        'specialization': specialization
+        'specialization': specialization,
     }
     return person
 
