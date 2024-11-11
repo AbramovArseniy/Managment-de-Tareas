@@ -113,8 +113,9 @@ def show_team(team_id):
     print("Equipo: ", teams[team_id]['name'])
     print("Miembros del equipo:")
     for person_id in teams[team_id]['person_ids']:
-        print(f'\t{people[person_id]["name"]} {people[person_id]["surname"]}')
+        print(f'\t{people[person_id]["name"]}')
     print("----------------")
+    input("Pulse ENTER para continuar")
 
 
 def manage_team(team_id):
@@ -126,7 +127,8 @@ def manage_team(team_id):
                "cambiar nombre de equipo": change_team_name,
                "agregar nueva persona ": add_person_to_team,
                "eliminar a una persona del equipo": remove_from_team,
-               "ver estadistica": show_team_stats,
+               "mostrar estadistica": show_team_stats,
+               "mostrar personas de equipo": show_team,
                "volver a inicio": go_begin}
 
     print("elige accion que quieres hacer:")
@@ -144,7 +146,7 @@ def manage_team(team_id):
         print('incorrect numero de accion')
         return 0
     action = actions[list(actions.keys())[act - 1]]
-    if act == 6:
+    if act == len(actions):
         go_begin()
     else:
         action(team_id)
@@ -257,7 +259,7 @@ def manage_teams():
             print("En primer lugar, cree un nuevo equipo ")
             return 0
 
-        id = utils.choose_id(teams, "Ingrese el número del equipo que desea modificar: ")
+        id = utils.choose_id(teams, "Ingrese el id del equipo que desea modificar: ")
         manage_team(id)
 
     elif act == 3:
