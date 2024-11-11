@@ -118,7 +118,6 @@ def assign_team():
 
 
 
-
 def create_task():
     """
         Crea una nueva tarea solicitando al usuario el nombre, descripción y prioridad.
