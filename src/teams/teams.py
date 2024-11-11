@@ -66,7 +66,7 @@ def remove_team(team_id):
     """
     utils.clear_console()
     teams.pop(team_id)
-    for id, task in tasks:
+    for id in tasks.keys():
         if task['team_id'] == team_id:
             tasks[id]['team_id'] = -1
     print("El equipo borro")
@@ -88,9 +88,9 @@ def add_person_to_team(team_id):
     """
     utils.clear_console()
     filtered_people = dict(filter(lambda x: x not in teams[team_id]['persons'], people))
-    for id, person in filtered_people:
+    for id in filtered_people.keys():
         print(id, end=".\n")
-        show_person(person)
+        show_person(filtered_people[id])
         print("----------------")
 
     person_id = input("Elige numero de person que quiere agregar a su equipo: ")
@@ -173,17 +173,17 @@ def remove_from_team(team_id):
 
 def print_top_teams():
     stats = {}
-    for id, team in teams:
-        stats[team['name']] = 0
+    for team_id in teams.keys():
+        stats[teams[team_id]['name']] = 0
         task_cnt = 0
-        for id, task in tasks:
-            if task['team_id'] == id and task['status'] == tasks_mod.STATUS_DONE:
-                stats[team['name']] += task['priority'] * min(1, datetime.strptime(task['done_at'], "%d/%m/%Y") - datetime.strptime(task['do_until'], "%d/%m/%Y"))/30
+        for task_id in tasks.keys():
+            if tasks[task_id]['team_id'] == id and tasks[task_id]['status'] == tasks_mod.STATUS_DONE:
+                stats[teams[team_id]['name']] += tasks[task_id]['priority'] * min(1, datetime.strptime(tasks[task_id]['done_at'], "%d/%m/%Y") - datetime.strptime(tasks[task_id]['do_until'], "%d/%m/%Y"))/30
                 task_cnt += 1
         try:
-            stats[team['name']] /= task_cnt
+            stats[teams[team_id]['name']] /= task_cnt
         except ZeroDivisionError:
-            stats[team['name']] = 0
+            stats[teams[team_id]['name']] = 0
     sorted_teams = [k for k, v in sorted(stats.items(), key=lambda item: item[1])][:10]
     for i, team_name in enumerate(sorted_teams):
         print(f"{i+1}. {team_name}")

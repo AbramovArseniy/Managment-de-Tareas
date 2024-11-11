@@ -103,28 +103,9 @@ def remove_person(person_id):
     """
     utils.clear_console()
     print(teams)
-    persons_teams = [person_id in team['person_ids'] for team in teams.values()]
-    if True in persons_teams:
-        print("Esta persona está en el equipo")
-        while True:
-            n = input("desea borrarla ?\n"
-                      "1. Si\n"
-                      "2. No\n")
-            if n == "1":
-                for team_id, status in enumerate(persons_teams):
-                    if status:
-                        teams[team_id]['person_ids'].remove(person_id)
-
-                people.pop(person_id)
-                print("La persona borro")
-                return 0
-            if n == "2":
-                go_begin()
-            else:
-                print("Tiene que ingresar 1 o 2")
-    else:
-        people.pop(person_id)
-        print("La persona borro")
+    for team_id in teams.keys():
+        if person_id in teams[team_id]['person_ids']:
+            teams[team_id]['person_ids'].remove(person_id)
 
 
 def change_person_name(id):
