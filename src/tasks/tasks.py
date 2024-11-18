@@ -117,7 +117,6 @@ def assign_team():
     tasks[task_id]['status'] = max(STATUS_IN_PROGRESS, tasks[task_id]['status'])
 
 
-
 def create_task():
     """
         Crea una nueva tarea solicitando al usuario el nombre, descripción y prioridad.

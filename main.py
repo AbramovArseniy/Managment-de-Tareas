@@ -10,6 +10,7 @@ from src.teams.teams import manage_teams, teams
 диаграммы 
 фикс удаления данных
 """
+
 def main():
     actions = {
         '1': manage_people,

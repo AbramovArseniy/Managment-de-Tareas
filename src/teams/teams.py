@@ -1,10 +1,11 @@
-from matplotlib import pyplot as plt
-from datetime import datetime, timedelta
-import src.tasks.tasks as tasks_mod
-import utils
 import calendar
-from src.datos import *
+from datetime import datetime, timedelta
+
+from matplotlib import pyplot as plt
+
 import src.datos as dt
+import src.tasks.tasks as tasks_mod
+from src.datos import *
 from src.people.people import show_person
 
 
@@ -17,6 +18,10 @@ def create_team():
     """
     utils.clear_console()
     name = input('Ingrese nombre de equipo: ')
+    while len(name) < 3:
+        print("Error. La longitud del nombre debe ser mayor o igual a 3")
+        name = input('Ingrese nombre de equipo: ')
+
     persons = []
     while True:
         filtered_people = dict(filter(lambda x: x[0] not in persons, people.items()))
@@ -50,7 +55,7 @@ def create_team():
             teams[str(teams_next_id)] = new_team
             dt.teams_next_id += 1
             print("Nuevo equipo ha creado con exito!")
-            break
+            return 0
 
 
 def go_begin():

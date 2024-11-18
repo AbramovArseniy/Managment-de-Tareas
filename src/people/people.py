@@ -1,7 +1,5 @@
-from src.datos import *
 import src.datos as dt
-import utils
-
+from src.datos import *  # importamos todas objetos de datos.py
 
 specializations = {
     1: 'Middle programador',
@@ -24,12 +22,19 @@ def create_person():
     utils.clear_console()
     try:
         name = input('Ingrese nombre completo de la persona: ')
+        while len(name) < 3:
+            print("Error. La longitud del nombre debe ser mayor o igual a 3")
+            name = input('Ingrese nombre completo de la persona: ')
+
         for s in specializations.keys():
             print(f"{s}: {specializations[s]}")
 
         specialization = specializations[int(input(f'Ingrese numero de especialidad de la persona: '))]
 
         age = int(input(f'Ingrese edad de la persona: '))
+        while age < 18 or age > 80:
+            print("La edad debe ser entre 18 y 80")
+            age = int(input(f'Ingrese edad de la persona: '))
 
         person = new_person(name, age, specialization)
         people[str(people_next_id)] = person
@@ -76,7 +81,7 @@ def manage_people():
 
     act = input()
     while act not in ('1', '2', '3', '4'):
-        print("Tiene que ingresar un numero entre 1 y 3\n")
+        print("Tiene que ingresar un numero entre 1 y 4\n")
         print("elige accion que quieres hacer: ")
 
         act = input()
