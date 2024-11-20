@@ -1,4 +1,5 @@
 import os
+import pick
 
 
 def clear_console():
@@ -29,40 +30,26 @@ def choose_id(d, input_msg="Ingrese el Id: "):
     i = 0
     cmd = ''
     while cmd not in d.keys():
+
+        options = []
+        printed_items = list(d.items())[i: min(i + page_size, num_items)]
         for item in list(d.items())[i: min(i + page_size, num_items)]:
-            print(f'Id: {item[0]}\n'
-                  f'Nombre: {item[1]["name"]}')
-            print("---------")
-
+            options.append(f'{item[1]["name"]}')
+        if i >= page_size:
+            options.append('Ver pagina previa')
+        if i < num_items - page_size:
+            options.append('Ver proxima pagina')
         print(f'Pagina {i // page_size + 1}/{(num_items - 1) // page_size + 1}')
-        print('Ingrese:\n'
-              'next - Ver proxima pagina\n'
-              'prev - Ver pagina previa\n'
-              'id - elegir\n')
-        cmd = input()
+        option, index = pick.pick(options, input_msg, indicator='=>')
 
-        if cmd == 'next':
+        if option == 'Ver proxima pagina':
             clear_console()
-            if i < num_items - page_size:
-                i += page_size
-            else:
-                print('Ya esta en la ultima pagina')
-        elif cmd == 'prev':
+            i += page_size
+        elif option == 'Ver pagina previa':
             clear_console()
-            if i >= page_size:
-                i -= page_size
-            else:
-                print('Ya esta en la primera pagina')
-
-        elif cmd in d.keys():
-            return cmd
+            i -= page_size
         else:
-            clear_console()
-            print('Error.\n'
-                  'Tiene que ingresar:\n'
-                  'next - Ver proxima pagina\n'
-                  'prev - Ver pagina previa\n'
-                  'id - elegir')
+            return printed_items[index][0]
 
 
 def print_dict(d, filter_func=lambda item: True):
