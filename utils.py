@@ -20,7 +20,8 @@ def load_from_json(file):
     return data
 
 
-def choose_id(d, input_msg="Ingrese el Id: "):
+def choose_id(d, input_msg="Ingrese el Id: ", filter_func=lambda item: True):
+    filtered_dict = dict(filter(lambda item: int(item[0]) > 0 and filter_func(item), d.items()))
     clear_console()
     if len(d) == 0:
         print('No hay elementos adecuados\n')
@@ -32,15 +33,17 @@ def choose_id(d, input_msg="Ingrese el Id: "):
     while cmd not in d.keys():
 
         options = []
+        j = 1
         printed_items = list(d.items())[i: min(i + page_size, num_items)]
         for item in list(d.items())[i: min(i + page_size, num_items)]:
-            options.append(f'{item[1]["name"]}')
+            options.append(f'{j}.{item[1]["name"]}')
+            j += 1
         if i >= page_size:
             options.append('Ver pagina previa')
         if i < num_items - page_size:
             options.append('Ver proxima pagina')
-        print(f'Pagina {i // page_size + 1}/{(num_items - 1) // page_size + 1}')
-        option, index = pick.pick(options, input_msg, indicator='=>')
+        page_msg = f'Pagina {i // page_size + 1}/{(num_items - 1) // page_size + 1}'
+        option, index = choose(options, input_msg + '\n' + page_msg, indicator='=>')
 
         if option == 'Ver proxima pagina':
             clear_console()
@@ -48,6 +51,8 @@ def choose_id(d, input_msg="Ingrese el Id: "):
         elif option == 'Ver pagina previa':
             clear_console()
             i -= page_size
+        elif index == len(options):
+            return '-1'
         else:
             return printed_items[index][0]
 
@@ -72,7 +77,7 @@ def print_dict(d, filter_func=lambda item: True):
         print('Ingrese:\n'
               '1 - Ver proxima pagina\n'
               '2 - Ver pagina previa\n'
-              '3 - Continuar')
+              '3 - Volver al inicio')
         cmd = input()
         if cmd not in ('1', '2', '3'):
             clear_console()
@@ -91,3 +96,8 @@ def print_dict(d, filter_func=lambda item: True):
                 print('Ya esta en la primera pagina')
         elif cmd == '3':
             return
+
+
+def choose(options, title, indicator='=>'):
+    options.append('Volver al inicio')
+    return pick.pick(options, title, indicator)

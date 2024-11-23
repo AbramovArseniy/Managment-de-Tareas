@@ -1,4 +1,5 @@
 import utils
+import pick
 from src.people.people import manage_people, people
 from src.tasks.tasks import manage_tasks, tasks
 from src.teams.teams import manage_teams, teams
@@ -13,26 +14,23 @@ from src.teams.teams import manage_teams, teams
 
 def main():
     actions = {
-        '1': manage_people,
-        '2': manage_teams,
-        '3': manage_tasks
+        'Manejar Personas': manage_people,
+        'Manejar Equipos': manage_teams,
+        'Manejar Tareas': manage_tasks,
+        'Terminar el programa': 0
     }
     try:
         while True:
             utils.clear_console()
-            cmd = input(
-                'Ingrese que quiere hacer:\n1. Manejar Personas\n2. Manejar Equipos\n3. Manejar Tareas\n4. Terminar el programa\n')
-            while cmd not in ('1', '2', '3', '4'):
-                print("Tiene que ingresar un numero entre 1 y 4\n")
-                cmd = input()
-
-            if cmd == '4':
+            input_msg = "Elija que quiere hacer"
+            options = list(actions.keys())
+            act, act_num = pick.pick(options, input_msg, indicator='=>')
+            if act_num == 3:
                 utils.save_to_json_file(tasks, "src/tasks/tasks.json")
                 utils.save_to_json_file(teams, "src/teams/teams.json")
                 utils.save_to_json_file(people, "src/people/people.json")
                 return
-
-            actions[cmd]()
+            actions[act]()
 
     except KeyboardInterrupt:
         # Si se mata al termenal, guarda los datos en un archivo.
