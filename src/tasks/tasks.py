@@ -1,7 +1,6 @@
 from datetime import datetime
 import time
 
-import src.datos as dt
 import utils
 from src.datos import *
 
