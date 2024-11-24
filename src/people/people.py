@@ -1,5 +1,5 @@
-import src.datos as dt
 from src.datos import *  # importamos todas objetos de datos.py
+import time
 
 specializations = {
     1: 'Middle programador',
@@ -35,11 +35,11 @@ def create_person():
         while age < 18 or age > 80:
             print("La edad debe ser entre 18 y 80")
             age = int(input(f'Ingrese edad de la persona: '))
-
+        people_next_id = max(map(int, people.keys())) + 1
         person = new_person(name, age, specialization)
         people[str(people_next_id)] = person
-        dt.people_next_id += 1
         print('Persona es guardada\n')
+        time.sleep(3)
         return person
     except:
         print("Error al agregar la persona")
@@ -91,7 +91,7 @@ def manage_people():
     if act == 1:
         create_person()
     elif act == 2:
-        id = utils.choose_id(people, "Ingrese numero de persona que desea modificar ")
+        id = utils.choose_id(people, "Elija numero de persona que desea modificar ")
         manage_person(id)
     elif act == 3:
         utils.print_dict(people)
