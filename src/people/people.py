@@ -1,5 +1,6 @@
-from src.datos import *  # importamos todas objetos de datos.py
 import time
+
+from src.datos import *  # importamos todas objetos de datos.py
 
 specializations = {
     1: 'Middle programador',
@@ -21,7 +22,7 @@ def create_person():
 
     utils.clear_console()
     try:
-        name = input('Ingrese nombre completo de la persona: ')
+        name = input('Ingrese Tu nombre completo de la persona: ')
         while len(name) < 3:
             print("Error. La longitud del nombre debe ser mayor o igual a 3")
             name = input('Ingrese nombre completo de la persona: ')
@@ -29,24 +30,39 @@ def create_person():
         for s in specializations.keys():
             print(f"{s}: {specializations[s]}")
 
-        specialization = specializations[int(input(f'Ingrese numero de especialidad de la persona: '))]
+        specialization = specializations[int(input(f'Ingrese numero de tu especialidad: '))]
 
-        age = int(input(f'Ingrese edad de la persona: '))
+        age = int(input(f'Ingrese tu edad: '))
         while age < 18 or age > 80:
             print("La edad debe ser entre 18 y 80")
             age = int(input(f'Ingrese edad de la persona: '))
+
         people_next_id = max(map(int, people.keys())) + 1
-        person = new_person(name, age, specialization)
+
+        login = input('Ingrese tu login: ')
+        while len(login) < 3:
+            print("Error. La longitud del login debe ser mayor o igual a 3")
+            login = input('Ingrese tu login: ')
+
+        logins = [person['login'] for person in people.values()]
+        while login in logins:
+            print("Error. Este login ya está en uso. Por favor, ingrese otro.")
+            login = input('Ingrese tu login: ')
+
+        password = input("Ingrese su contraseña.")
+        id=str(people_next_id)
+        person = new_person(name, age, specialization, login, password)
         people[str(people_next_id)] = person
+
         print('Persona es guardada\n')
-        time.sleep(3)
+        input("Presiona Enter para continuar...")
         return person
     except:
         print("Error al agregar la persona")
         input("Presiona Enter para continuar...")
 
 
-def new_person(name, age, specialization):
+def new_person(name, age, specialization, login, password):
     """
         Crea un diccionario con los detalles de una persona.
 
@@ -58,6 +74,8 @@ def new_person(name, age, specialization):
         'name': name,
         'age': age,
         'specialization': specialization,
+        'login': login,
+        'password': password,
     }
     return person
 

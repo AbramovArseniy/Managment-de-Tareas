@@ -101,3 +101,7 @@ def print_dict(d, filter_func=lambda item: True):
 def choose(options, title, indicator='=>'):
     options.append('Volver al inicio')
     return pick.pick(options, title, indicator)
+
+
+def get_session():
+    return load_from_json("src/session.json")

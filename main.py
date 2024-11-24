@@ -1,27 +1,26 @@
-import utils
 import pick
+
+import utils
+from src.authorization import authorization
 from src.people.people import manage_people, people
 from src.tasks.tasks import manage_tasks, tasks
 from src.teams.teams import manage_teams, teams
 
-"""
-добавить
-Рекурсия 
-тесты 
-диаграммы 
-фикс удаления данных
-"""
 
 def main():
+    utils.save_to_json_file(authorization(), "src/session.json")
+
     actions = {
         'Manejar Personas': manage_people,
         'Manejar Equipos': manage_teams,
         'Manejar Tareas': manage_tasks,
         'Terminar el programa': 0
     }
+
     try:
         while True:
             utils.clear_console()
+
             input_msg = "Elija que quiere hacer"
             options = list(actions.keys())
             act, act_num = pick.pick(options, input_msg, indicator='=>')
