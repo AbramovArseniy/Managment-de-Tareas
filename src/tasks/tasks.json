@@ -1,1 +1,1 @@
-{"1": {"name": "tarea1", "description": "desc", "priority": 1, "status": 0, "team_id": "-1", "do_until": "31/12/9999", "done_at": ""}}
+{"1": {"name": "tarea1", "description": "desc", "priority": 1, "status": 1, "team_id": "1", "do_until": "31/12/9999", "done_at": ""}}

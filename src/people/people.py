@@ -127,6 +127,8 @@ def manage_people():
         create_person()
     elif act == 2:
         id = utils.choose_id(people, "Elija numero de persona que desea modificar ")
+        if id == '-1':
+            return 0
         manage_person(id)
     elif act == 3:
         utils.print_dict(people)

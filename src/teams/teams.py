@@ -253,9 +253,13 @@ def manage_teams():
         if people[user_id]['role']==1:
             filter_func = lambda item: user_id in item[1].get("person_ids", [])
             id = utils.choose_id(teams, "Elija el id del equipo que desea modificar: ",filter_func=filter_func)
+            if id == '-1':
+                return 0
             manage_team(id)
         elif people[user_id]['role']==0:
             id = utils.choose_id(teams, "Elija el id del equipo que desea modificar: ",)
+            if id == '-1':
+                return 0
             manage_team(id)
         else:
             print("No tienes suficientes permisos para realizar esta acción")

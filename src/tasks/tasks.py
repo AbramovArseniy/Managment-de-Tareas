@@ -198,7 +198,7 @@ def filter_tasks():
         if team_id == '-1':
             go_back()
         filter_func = lambda task: task[1]['team_id'] == team_id
-    else:
+    elif opt == utils.GO_BACK_STR:
         return 0
 
     task_id = utils.choose_id(tasks, 'Elija la tarea para ver toda la informacion: ', filter_func)
