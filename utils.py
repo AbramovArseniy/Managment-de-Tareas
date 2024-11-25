@@ -44,14 +44,13 @@ def choose_id(d, input_msg="Ingrese el Id: ", filter_func=lambda item: True):
             options.append('Ver proxima pagina')
         page_msg = f'Pagina {i // page_size + 1}/{(num_items - 1) // page_size + 1}'
         option, index = choose(options, input_msg + '\n' + page_msg, indicator='=>')
-
         if option == 'Ver proxima pagina':
             clear_console()
             i += page_size
         elif option == 'Ver pagina previa':
             clear_console()
             i -= page_size
-        elif index == len(options):
+        elif option == GO_BACK_STR:
             return '-1'
         else:
             return printed_items[index][0]
@@ -59,7 +58,7 @@ def choose_id(d, input_msg="Ingrese el Id: ", filter_func=lambda item: True):
 
 def print_dict(d, filter_func=lambda item: True):
     clear_console()
-    filtered_dict = dict(filter(lambda item: int(item[0]) > 0 and filter_func(item), d.items()))
+    filtered_dict = dict(filter(lambda item: int(item[0]) > -1 and filter_func(item), d.items()))
     page_size = 5
     if len(filtered_dict) == 0:
         print('No hay elementos adecuados\n')
@@ -99,9 +98,12 @@ def print_dict(d, filter_func=lambda item: True):
 
 
 def choose(options, title, indicator='=>'):
-    options.append('Volver al inicio')
-    return pick.pick(options, title, indicator)
+    opts = [opt for opt in options]
+    opts.append(GO_BACK_STR)
+    return pick.pick(opts, title, indicator)
 
+
+GO_BACK_STR = 'Volver al inicio'
 
 def get_session():
     return load_from_json("src/session.json")

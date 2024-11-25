@@ -50,7 +50,7 @@ def create_team():
         options = ["  Agregar persona una mas\n",
               "  Continuar\n: "]
         option, ind = utils.choose(options, "Que quieres hacer ?")
-        if ind == len(options):
+        if option == utils.GO_BACK_STR:
             go_begin()
         if ind == 1:
             new_team = {
@@ -135,11 +135,11 @@ def manage_team(team_id):
                "Mostrar personas de equipo": show_team,}
     input_msg = "Elija que quiere hacer:"
     act, act_num = utils.choose(list(actions.keys()), input_msg)
-    action = actions[act]
-    if act_num == len(actions):
+
+    if act == utils.GO_BACK_STR:
         go_begin()
     else:
-        action(team_id)
+        action = actions[act](team_id)
 
 
 def remove_from_team(team_id):
@@ -240,6 +240,8 @@ def manage_teams():
             return 0
 
         id = utils.choose_id(teams, "Elija el id del equipo que desea modificar: ")
+        if id == '-1':
+            go_begin()
         manage_team(id)
 
     elif act_num == 2:
