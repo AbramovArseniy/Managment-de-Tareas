@@ -50,7 +50,7 @@ def create_team():
         options = ["  Agregar persona una mas\n",
               "  Continuar\n: "]
         option, ind = utils.choose(options, "Que quieres hacer ?")
-        if ind == len(options):
+        if option == utils.GO_BACK_STR:
             go_begin()
         if ind == 1:
             new_team = {
@@ -133,14 +133,14 @@ def manage_team(team_id):
                "Eliminar una persona del equipo": remove_from_team,
                "Mostrar estadistica": show_team_stats,
                "Mostrar personas de equipo": show_team,}
-    
+
     input_msg = "Elija que quiere hacer:"
     act, act_num = utils.choose(list(actions.keys()), input_msg)
-    action = actions[act]
-    if act_num == len(actions):
+
+    if act == utils.GO_BACK_STR:
         go_begin()
     else:
-        action(team_id)
+        action = actions[act](team_id)
 
 
 def remove_from_team(team_id):
@@ -218,8 +218,7 @@ def show_team_stats(team_id):
     plt.ylabel('Cantidad de Tareas')
     plt.legend(['Tareas hechas', 'Hecho con Retraso'])
     plt.show()
-input("Pulse ENTER para continuar")
-
+    input("Pulse ENTER para continuar")
 
 
 
@@ -248,7 +247,6 @@ def manage_teams():
     elif act_num == 1:
         if len(teams) == 0:
             print("En primer lugar, cree un nuevo equipo ")
-            input("Pulse ENTER para continuar")
             return 0
         user_id = utils.get_session()['id']
         if people[user_id]['role']==1:

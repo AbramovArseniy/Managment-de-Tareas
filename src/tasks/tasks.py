@@ -84,7 +84,7 @@ def manage_tasks():
                "  Manejar tarea",
                "  Ver tareas filtradas"]
     opt, ind = utils.choose(options, input_msg)
-    if ind == len(options):
+    if opt == utils.GO_BACK_STR:
         return 0
     actions[ind]()
 
@@ -102,10 +102,10 @@ def manage_task():
     ]
     input_msg = "Elija que quiere hacer"
     options = ["  Cambiar datos de tarea",
-               "  Borrar tarea"
+               "  Borrar tarea",
                "  Assingar tarea a un equipo"]
     opt, ind = utils.choose(options, input_msg)
-    if ind == len(options):
+    if opt == utils.GO_BACK_STR:
         return 0
     actions[ind]()
 
@@ -147,7 +147,7 @@ def create_task():
                "  Media",
                "  Alta"]
     opt, prio = utils.choose(options, input_msg)
-    if prio == len(options):
+    if prio == utils.GO_BACK_STR:
         return 0
     task = new_task(name, desc, prio)
     tasks_next_id = max(map(int, tasks.keys())) + 1

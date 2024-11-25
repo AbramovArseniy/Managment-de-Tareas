@@ -32,7 +32,7 @@ def create_person():
             return None
 
         opt, role = utils.choose(roles, 'Elija su rol')
-        if role == len(roles):
+        if opt == utils.GO_BACK_STR:
             return None
         ok = False
         age = 0
