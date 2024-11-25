@@ -33,7 +33,7 @@ def sing_in():
 
     while login not in logins and login != '-1':
         print("No existe un usuario con este login")
-        login = input("Ingrese su login: ")
+        login = input("Ingrese su login o -1 para volver al inicio: ")
     if login == '-1':
         return None
     person_id = None
