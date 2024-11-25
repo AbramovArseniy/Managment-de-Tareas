@@ -40,7 +40,7 @@ def create_team():
         if len(filtered_people) == 1:
             new_team = {
                 "name": name,
-                "persons": persons
+                "person_ids": persons
             }
             teams[str(teams_next_id)] = new_team
             dt.teams_next_id += 1
@@ -55,9 +55,11 @@ def create_team():
         if ind == 1:
             new_team = {
                 "name": name,
-                "persons": persons
+                "person_ids": persons
             }
-            teams_next_id = max(map(int, teams.keys())) + 1
+            teams_next_id = 1
+            if len(people.keys()) != 0:
+                teams_next_id = max(map(int, teams.keys())) + 1
             teams[str(teams_next_id)] = new_team
             print("Nuevo equipo ha creado con exito!")
             return 0

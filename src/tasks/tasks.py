@@ -150,7 +150,11 @@ def create_task():
     if prio == utils.GO_BACK_STR:
         return 0
     task = new_task(name, desc, prio)
-    tasks_next_id = max(map(int, tasks.keys())) + 1
+
+
+    tasks_next_id = 1
+    if len(tasks.keys()) != 0:
+        tasks_next_id = max(map(int, tasks.keys())) + 1
     tasks[str(tasks_next_id)] = task
     print('Tarea es guardada\n')
     time.sleep(3)

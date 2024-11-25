@@ -58,14 +58,15 @@ def create_person():
             login = input('Ingrese su login o -1 para volver al inicio: ')
         if login == '-1':
             return None
+
         password = input("Ingrese su contraseña o -1 para volver al inicio:")
         if password == '-1':
             return None
-        if len(people.keys())==0:
-            people_next_id = 1
-        else: 
+
+        people_next_id = 1
+        if len(people.keys()) != 0:
             people_next_id = max(map(int, people.keys())) + 1
-            
+
         person = new_person(name, age, role, login, password)
         people[str(people_next_id)] = person
 
