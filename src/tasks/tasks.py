@@ -101,7 +101,7 @@ def manage_task():
     ]
     input_msg = "Elija que quiere hacer"
     options = ["  Cambiar datos de tarea",
-               "  Borrar tarea"
+               "  Borrar tarea",
                "  Assingar tarea a un equipo"]
     opt, ind = utils.choose(options, input_msg)
     if opt == utils.GO_BACK_STR:
