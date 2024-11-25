@@ -34,7 +34,8 @@ def main():
                 return
             actions[act]()
 
-    except:
+    except Exception as e:
+        print(e)
         # Si se mata al termenal, guarda los datos en un archivo.
         utils.save_to_json_file(tasks, "src/tasks/tasks.json")
         utils.save_to_json_file(teams, "src/teams/teams.json")
