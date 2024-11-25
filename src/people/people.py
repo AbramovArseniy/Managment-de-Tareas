@@ -195,6 +195,11 @@ def show_person(id):
     """
         Imprime la información detallada de una persona.
     """
+    person_teams = []
+    for team in teams.items():
+        if id in team[1]['person_ids']:
+            person_teams.append(team[1]['name'])
     print(f"Nombre: {people[id]['name']}\n"
           f"Role: {roles[people[id]['role']]}\n"
-          f"Edad: {people[id]['age']}")
+          f"Edad: {people[id]['age']}\n"
+          f"Equipos: {person_teams}")
