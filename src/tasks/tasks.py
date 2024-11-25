@@ -195,15 +195,17 @@ def filter_tasks():
         filter_func = lambda task: task[1]['status'] == status
     elif ind == 2:
         team_id = utils.choose_id(teams, "Elija el equipo")
-        filter_func = tasks, lambda task: task[1]['team_id'] == team_id
+        if team_id == '-1':
+            go_back()
+        filter_func = lambda task: task[1]['team_id'] == team_id
     else:
         return 0
 
     task_id = utils.choose_id(tasks, 'Elija la tarea para ver toda la informacion: ', filter_func)
-    if id == '-1':
+    if task_id == '-1':
         go_back()
     else:
-        print_task_info(tasks[id])
+        print_task_info(tasks[task_id])
         input('Pressiona Enter para volver a menu...')
 
 

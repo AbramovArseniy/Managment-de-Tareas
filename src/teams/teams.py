@@ -133,8 +133,7 @@ def manage_team(team_id):
                "Cambiar nombre de equipo": change_team_name,
                "Agregar nueva persona ": add_person_to_team,
                "Eliminar una persona del equipo": remove_from_team,
-               "Mostrar estadistica": show_team_stats,
-               "Mostrar personas de equipo": show_team,}
+               "Mostrar estadistica": show_team_stats,}
 
     input_msg = "Elija que quiere hacer:"
     act, act_num = utils.choose(list(actions.keys()), input_msg)
@@ -264,7 +263,11 @@ def manage_teams():
             return 0
     elif act_num == 2:
         print(teams)
-        utils.print_dict(teams, lambda task: int(task[0]) > 0)
+        id = utils.choose_id(teams, 'Elija un equipo, para ver mas informacion: ')
+        if id == '-1':
+            return 0
+        show_team(id)
+
 
     elif act_num == 3:
         print_top_teams()

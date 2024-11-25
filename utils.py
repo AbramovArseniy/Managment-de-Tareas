@@ -27,7 +27,9 @@ def choose_id(d, input_msg="Ingrese el Id: ", filter_func=lambda item: True):
 
     if len(filtered_dict) == 0:
         print('No hay elementos adecuados\n')
-        return
+        input('Pressiona Enter para volver a menu...')
+        return '-1'
+
     page_size = 5
     num_items = len(filtered_dict)
     i = 0
