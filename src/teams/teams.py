@@ -99,7 +99,7 @@ def add_person_to_team(team_id):
        Añade una persona al equipo seleccionado.
     """
     utils.clear_console()
-    filtered_people = dict(filter(lambda x: x[0] not in teams[team_id]['persons'], people.items()))
+    filtered_people = dict(filter(lambda x: x[0] not in teams[team_id]['person_ids'], people.items()))
     for id in filtered_people.keys():
         print(id, end=".\n")
         show_person(id)
@@ -133,8 +133,7 @@ def manage_team(team_id):
                "Cambiar nombre de equipo": change_team_name,
                "Agregar nueva persona ": add_person_to_team,
                "Eliminar una persona del equipo": remove_from_team,
-               "Mostrar estadistica": show_team_stats,
-               "Mostrar personas de equipo": show_team,}
+               "Mostrar estadistica": show_team_stats,}
 
     input_msg = "Elija que quiere hacer:"
     act, act_num = utils.choose(list(actions.keys()), input_msg)
@@ -252,7 +251,7 @@ def manage_teams():
             return 0
         user_id = utils.get_session()['id']
         if people[user_id]['role']==1:
-            filter_func = lambda item: user_id in item[1].get("persons", [])
+            filter_func = lambda item: user_id in item[1].get("person_ids", [])
             id = utils.choose_id(teams, "Elija el id del equipo que desea modificar: ",filter_func=filter_func)
             manage_team(id)
         elif people[user_id]['role']==0:
@@ -264,7 +263,11 @@ def manage_teams():
             return 0
     elif act_num == 2:
         print(teams)
-        utils.print_dict(teams, lambda task: int(task[0]) > 0)
+        id = utils.choose_id(teams, 'Elija un equipo, para ver mas informacion: ')
+        if id == '-1':
+            return 0
+        show_team(id)
+
 
     elif act_num == 3:
         print_top_teams()
