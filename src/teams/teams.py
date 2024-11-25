@@ -100,13 +100,13 @@ def add_person_to_team(team_id):
     filtered_people = dict(filter(lambda x: x[0] not in teams[team_id]['persons'], people.items()))
     for id in filtered_people.keys():
         print(id, end=".\n")
-        show_person(filtered_people[id])
+        show_person(id)
         print("----------------")
 
     person_id = utils.choose_id(filtered_people, 'Elija la persona que quiere agregar a su equipo: ')
     if person_id == '-1':
         return 0
-    print(show_person(filtered_people[person_id]), "se ha añadido al equipo")
+    print(show_person(person_id), "se ha añadido al equipo")
     time.sleep(3)
 
 
@@ -146,7 +146,7 @@ def remove_from_team(team_id):
     utils.clear_console()
     for i, id in enumerate(teams[team_id]['person_ids']):
         print(i + 1, end=". ")
-        show_person(people[id])
+        show_person(id)
         print("---------")
 
     n = input("Ingrese el número de la persona que desea eliminar del equipo.")
