@@ -93,6 +93,7 @@ def manage_task():
     utils.clear_console()
     if len(tasks) == 0:
         print('Todavia no hay tareas\n')
+        input('Pressiona Enter para volver a menu...')
         return
     actions = [
         change_task,
@@ -164,7 +165,7 @@ def filter_tasks():
     utils.clear_console()
     if len(tasks) == 0:
         print('Todavia no hay tareas\n')
-        time.sleep(3)
+        input('Pressiona Enter para volver a menu...')
         return
     input_msg = "Por qué quiere filtrar las tareas?"
     options = ["  Prioridad",

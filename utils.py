@@ -21,21 +21,21 @@ def load_from_json(file):
 
 
 def choose_id(d, input_msg="Ingrese el Id: ", filter_func=lambda item: True):
-    filtered_dict = dict(filter(lambda item: int(item[0]) > 0 and filter_func(item), d.items()))
+    filtered_dict = dict(filter(lambda item: int(item[0]) > -1 and filter_func(item), d.items()))
     clear_console()
-    if len(d) == 0:
+
+    if len(filtered_dict) == 0:
         print('No hay elementos adecuados\n')
         return
     page_size = 5
-    num_items = len(d)
+    num_items = len(filtered_dict)
     i = 0
     cmd = ''
-    while cmd not in d.keys():
-
+    while cmd not in filtered_dict.keys():
         options = []
         j = 1
-        printed_items = list(d.items())[i: min(i + page_size, num_items)]
-        for item in list(d.items())[i: min(i + page_size, num_items)]:
+        printed_items = list(filtered_dict.items())[i: min(i + page_size, num_items)]
+        for item in list(filtered_dict.items())[i: min(i + page_size, num_items)]:
             options.append(f'{j}.{item[1]["name"]}')
             j += 1
         if i >= page_size:
@@ -63,6 +63,7 @@ def print_dict(d, filter_func=lambda item: True):
     page_size = 5
     if len(filtered_dict) == 0:
         print('No hay elementos adecuados\n')
+        input("Presiona Enter para continuar...")
         return
 
     num_items = len(filtered_dict)
@@ -105,3 +106,4 @@ def choose(options, title, indicator='=>'):
 
 def get_session():
     return load_from_json("src/session.json")
+

@@ -24,12 +24,12 @@ def create_team():
         print("Error. La longitud del nombre debe ser mayor o igual a 3")
         name = input('Ingrese nombre de equipo: ')
 
-    persons = []
+    persons = [utils.get_session()['id']]
     while True:
         filtered_people = dict(filter(lambda x: x[0] not in persons, people.items()))
         if len(filtered_people) == 0:
             print("No hay personas disponibles para añadir al equipo ")
-            time.sleep(3)
+            input('Presione Enter para continuar...')
             return 0
 
         person_id = utils.choose_id(filtered_people, "Elige numero de persona que quiere agregar a su equipo: ")
@@ -45,7 +45,7 @@ def create_team():
             teams[str(teams_next_id)] = new_team
             dt.teams_next_id += 1
             print("Nuevo equipo ha creado con exito!")
-            time.sleep(3)
+            input('Presione Enter para continuar...')
             return 0
         options = ["  Agregar persona una mas\n",
               "  Continuar\n: "]
@@ -77,7 +77,7 @@ def remove_team(team_id):
     utils.clear_console()
     teams.pop(team_id)
     for id in tasks.keys():
-        if task['team_id'] == team_id:
+        if tasks[id]['team_id'] == team_id:
             tasks[id]['team_id'] = -1
     print("El equipo borro")
 
@@ -107,7 +107,7 @@ def add_person_to_team(team_id):
     if person_id == '-1':
         return 0
     print(show_person(person_id), "se ha añadido al equipo")
-    time.sleep(3)
+    input('Presione Enter para continuar...')
 
 
 def show_team(team_id):
@@ -130,9 +130,10 @@ def manage_team(team_id):
     actions = {"Borrar equipo": remove_team,
                "Cambiar nombre de equipo": change_team_name,
                "Agregar nueva persona ": add_person_to_team,
-               "Eliminar a una persona del equipo": remove_from_team,
+               "Eliminar una persona del equipo": remove_from_team,
                "Mostrar estadistica": show_team_stats,
                "Mostrar personas de equipo": show_team,}
+    
     input_msg = "Elija que quiere hacer:"
     act, act_num = utils.choose(list(actions.keys()), input_msg)
     action = actions[act]
@@ -217,6 +218,9 @@ def show_team_stats(team_id):
     plt.ylabel('Cantidad de Tareas')
     plt.legend(['Tareas hechas', 'Hecho con Retraso'])
     plt.show()
+input("Pulse ENTER para continuar")
+
+
 
 
 def manage_teams():
@@ -233,16 +237,33 @@ def manage_teams():
                "Ver equipos mas efectivos"]
     act, act_num = utils.choose(actions, input_msg)
     if act_num == 0:
-        create_team()
+        if people[utils.get_session()['id']]['role']<2:
+            create_team()
+        else:
+            print("No tienes suficientes permisos para realizar esta acción")
+            input("Pulse ENTER para continuar")
+            return 0
+
+
     elif act_num == 1:
         if len(teams) == 0:
             print("En primer lugar, cree un nuevo equipo ")
+            input("Pulse ENTER para continuar")
             return 0
-
-        id = utils.choose_id(teams, "Elija el id del equipo que desea modificar: ")
-        manage_team(id)
-
+        user_id = utils.get_session()['id']
+        if people[user_id]['role']==1:
+            filter_func = lambda item: user_id in item[1].get("persons", [])
+            id = utils.choose_id(teams, "Elija el id del equipo que desea modificar: ",filter_func=filter_func)
+            manage_team(id)
+        elif people[user_id]['role']==0:
+            id = utils.choose_id(teams, "Elija el id del equipo que desea modificar: ",)
+            manage_team(id)
+        else:
+            print("No tienes suficientes permisos para realizar esta acción")
+            input("Pulse ENTER para continuar")
+            return 0
     elif act_num == 2:
+        print(teams)
         utils.print_dict(teams, lambda task: int(task[0]) > 0)
 
     elif act_num == 3:

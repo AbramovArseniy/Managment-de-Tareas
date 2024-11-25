@@ -12,7 +12,7 @@ def main():
 
     actions = {
         'Manejar mi Perfil': manage_profile,
-        'Manejar Personas': manage_people,
+        # 'Manejar Personas': manage_people,
         'Manejar Equipos': manage_teams,
         'Manejar Tareas': manage_tasks,
         'Terminar el Programa': 0
@@ -34,7 +34,7 @@ def main():
                 return
             actions[act]()
 
-    except KeyboardInterrupt:
+    except:
         # Si se mata al termenal, guarda los datos en un archivo.
         utils.save_to_json_file(tasks, "src/tasks/tasks.json")
         utils.save_to_json_file(teams, "src/teams/teams.json")

@@ -61,14 +61,19 @@ def create_person():
         password = input("Ingrese su contraseña o -1 para volver al inicio:")
         if password == '-1':
             return None
-        people_next_id = max(map(int, people.keys())) + 1
+        if len(people.keys())==0:
+            people_next_id = 1
+        else: 
+            people_next_id = max(map(int, people.keys())) + 1
+            
         person = new_person(name, age, role, login, password)
         people[str(people_next_id)] = person
 
         print('Persona es guardada\n')
         input("Presiona Enter para continuar...")
         return {'id': str(people_next_id)}
-    except:
+    except Exception as e:
+        print(e)
         print("Error al agregar la persona")
         input("Presiona Enter para continuar...")
 
@@ -183,6 +188,7 @@ def manage_person(id):
 
 
 def show_person(id):
+    utils.clear_console()
     """
         Imprime la información detallada de una persona.
     """
