@@ -157,7 +157,7 @@ def create_task():
         tasks_next_id = max(map(int, tasks.keys())) + 1
     tasks[str(tasks_next_id)] = task
     print('Tarea es guardada\n')
-    time.sleep(3)
+    input("Presiona Enter para continuar...")
 
 
 def filter_tasks():
