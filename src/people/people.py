@@ -1,17 +1,20 @@
-from src.datos import *
+import time
 
+import utils
+from src.datos import *  # importamos todas objetos de datos.py
 
-specializations = {
-    1: 'Middle programador',
-    2: 'Senor programador',
-    3: 'Junior programador',
-    4: 'Team lid',
-}
+USER_ROLE_ADMIN = 0
+USER_ROLE_TEAM_LEAD = 1
+USER_ROLE_DEV = 2
+
+roles = ['Adminstrador',
+    'Team lead',
+    'Desarrollador']
 
 
 def create_person():
     """
-        Crea una nueva persona solicitando al usuario el nombre, apellido, especialización y edad.
+        Crea una nueva persona solicitando al usuario el nombre, apellido, rol y edad.
 
         Luego, añade la persona creada a la lista global 'people'.
 
@@ -21,24 +24,62 @@ def create_person():
 
     utils.clear_console()
     try:
-        name = input('Ingrese nombre de la persona: ')
-        surname = input('Ingrese apellido de la persona: ')
-        for s in specializations.keys():
-            print(f"{s}: {specializations[s]}")
+        name = input('Ingrese su nombre completo o -1 para volver al inicio: ')
+        while len(name) < 3 and name != '-1':
+            print("Error. La longitud del nombre debe ser mayor o igual a 3")
+            name = input('Ingrese su nombre completo o -1 para volver al inicio: ')
+        if name == '-1':
+            return None
 
-        specialization = specializations[int(input(f'Ingrese numero de especialidad de la persona: '))]
+        opt, role = utils.choose(roles, 'Elija su rol')
+        if opt == utils.GO_BACK_STR:
+            return None
+        ok = False
+        age = 0
+        while not ok:
+            try:
+                age = int(input('Ingrese su edad o -1 para volver al inicio: '))
+                if age == -1:
+                    return None
+                if age < 18  or age > 80:
+                    print("La edad debe ser entre 18 y 80")
+                else:
+                    ok = True
+            except ValueError:
+                print("La edad debe ser un numero")
 
-        age = int(input(f'Ingrese edad de la persona: '))
+        logins = [person['login'] for person in people.values()]
+        login = input('Ingrese su login o -1 para volver al inicio: ')
+        while (len(login) < 3 and login != '-1') or login in logins:
+            if len(login) < 3:
+                print("Error. La longitud del login debe ser mayor o igual a 3")
+            else:
+                print("Error. Este login ya está en uso. Por favor, ingrese otro.")
+            login = input('Ingrese su login o -1 para volver al inicio: ')
+        if login == '-1':
+            return None
 
-        person = new_person(name, surname, age, specialization)
-        people.append(person)
+        password = input("Ingrese su contraseña o -1 para volver al inicio:")
+        if password == '-1':
+            return None
+
+        people_next_id = 1
+        if len(people.keys()) != 0:
+            people_next_id = max(map(int, people.keys())) + 1
+
+        person = new_person(name, age, role, login, password)
+        people[str(people_next_id)] = person
+
         print('Persona es guardada\n')
-        return person
-    except:
+        input("Presiona Enter para continuar...")
+        return {'id': str(people_next_id)}
+    except Exception as e:
+        print(e)
         print("Error al agregar la persona")
+        input("Presiona Enter para continuar...")
 
 
-def new_person(name, surname, age, specialization):
+def new_person(name, age, role, login, password):
     """
         Crea un diccionario con los detalles de una persona.
 
@@ -48,11 +89,11 @@ def new_person(name, surname, age, specialization):
     utils.clear_console()
     person = {
         'name': name,
-        'surname': surname,
         'age': age,
-        'specialization': specialization,  # Baja, Media, Alta
+        'role': role,
+        'login': login,
+        'password': password,
     }
-
     return person
 
 
@@ -63,19 +104,19 @@ def manage_people():
        Solicita al usuario que elija una acción y llama a la función correspondiente.
     """
     utils.clear_console()
-    actions = {"Agregar una persona": create_person,
-               "Manejar una persona": manage_person,
-               "Ver la lista de personas": show_people,
-               "Volver a inicio": go_begin}
+    actions = ["Agregar una persona",
+               "Manejar una persona",
+               "Ver la lista de personas",
+               "Volver a inicio"]
 
     print("elige accion que quieres hacer:")
 
-    for i, action in enumerate(actions.keys()):
+    for i, action in enumerate(actions):
         print(f"{i + 1}: {action}")
 
     act = input()
     while act not in ('1', '2', '3', '4'):
-        print("Tiene que ingresar un numero entre 1 y 3\n")
+        print("Tiene que ingresar un numero entre 1 y 4\n")
         print("elige accion que quieres hacer: ")
 
         act = input()
@@ -85,19 +126,12 @@ def manage_people():
     if act == 1:
         create_person()
     elif act == 2:
-        print("Ingrese numero de persona que desea modificar ")
-        for i, person in enumerate(people):
-            print(f"{i + 1}: {person['name']} {person['surname']}")
-        id = input()
-        while id not in [str(i) for i in range(1, len(people) + 1)]:
-            print(f"Tiene que ingresar un numero entre 1 y {len(people)}\n")
-            print("Ingrese numero de persona que desea modificar ")
-
-            id = input()
-        id = int(id)
-        manage_person(id - 1)
+        id = utils.choose_id(people, "Elija numero de persona que desea modificar ")
+        if id == '-1':
+            return 0
+        manage_person(id)
     elif act == 3:
-        show_people()
+        utils.print_dict(people)
     elif act == 4:
         go_begin()
     else:
@@ -105,33 +139,15 @@ def manage_people():
         return 0
 
 
-def remove_person(id):
+def remove_person(person_id):
     """
         Elimina una persona de la lista 'people' basada en su ID.
     """
     utils.clear_console()
-    persons_teams = [people[id] in team['persons'] for team in teams]
-    if True in persons_teams:
-        print("Esta persona está en el equipo")
-        while True:
-            n = input("desea borrarla ?\n"
-                      "1. Si\n"
-                      "2. No\n")
-            if n == "1":
-                for team_id, status in enumerate(persons_teams):
-                    if status:
-                        teams[team_id]['persons'].remove(people[id])
-
-                people.pop(id)
-                print("La persona borro")
-                return 0
-            if n == "2":
-                go_begin()
-            else:
-                print("Tiene que ingresar 1 o 2")
-    else:
-        people.pop(id)
-        print("La persona borro")
+    print(teams)
+    for team_id in teams.keys():
+        if person_id in teams[team_id]['person_ids']:
+            teams[team_id]['person_ids'].remove(person_id)
 
 
 def change_person_name(id):
@@ -142,16 +158,6 @@ def change_person_name(id):
     name = input("Ingrese nuevo nombre de persona: ")
     people[id]['name'] = name
     print(f"El nuevo nombre de persona es {name}")
-
-
-def change_person_surname(id):
-    """
-        Cambia el apellido de una persona en la lista 'people'.
-    """
-    utils.clear_console()
-    surname = input("Ingrese nuevo nombre de persona: ")
-    people[id]['surname'] = surname
-    print(f"El nuevo apellido de persona es {surname}")
 
 
 def go_begin(*args):
@@ -168,7 +174,6 @@ def manage_person(id):
     utils.clear_console()
     actions = {"borrar": remove_person,
                "cambiar nombre": change_person_name,
-               "cambiar apellido": change_person_surname,
                "volver a inicio": go_begin}
 
     print("elige accion que quieres hacer:")
@@ -176,8 +181,8 @@ def manage_person(id):
         print(f"{i + 1}: {action}")
 
     act = input()
-    while act not in ('1', '2', '3', '4'):
-        print("Tiene que ingresar un numero entre 1 y 4\n")
+    while act not in ('1', '2', '3'):
+        print("Tiene que ingresar un numero entre 1 y 3\n")
         print("elige accion que quieres hacer:")
 
         act = input()
@@ -185,19 +190,16 @@ def manage_person(id):
     action(id)
 
 
-def show_people():
+def show_person(id):
     utils.clear_console()
-    print("Lista de personas:")
-    for person in people:
-        show_person(person)
-        print("------------")
-    input("Presiona Enter para continuar...")
-
-
-def show_person(person):
     """
         Imprime la información detallada de una persona.
     """
-
-    for s in person:
-        print(f"{s}: {person[s]} ")
+    person_teams = []
+    for team in teams.items():
+        if id in team[1]['person_ids']:
+            person_teams.append(team[1]['name'])
+    print(f"Nombre: {people[id]['name']}\n"
+          f"Role: {roles[people[id]['role']]}\n"
+          f"Edad: {people[id]['age']}\n"
+          f"Equipos: {person_teams}")

@@ -1,10 +1,15 @@
-from matplotlib import pyplot as plt
+import calendar
+import time
 from datetime import datetime, timedelta
+
+from matplotlib import pyplot as plt
+
+import src.datos as dt
 import src.tasks.tasks as tasks_mod
 import utils
-import calendar
 from src.datos import *
 from src.people.people import show_person
+
 
 def create_team():
     """
@@ -15,52 +20,49 @@ def create_team():
     """
     utils.clear_console()
     name = input('Ingrese nombre de equipo: ')
-    persons = []
+    while len(name) < 3:
+        print("Error. La longitud del nombre debe ser mayor o igual a 3")
+        name = input('Ingrese nombre de equipo: ')
+
+    persons = [utils.get_session()['id']]
     while True:
-        filtered_people = list(filter(lambda x: x not in persons, people))
+        filtered_people = dict(filter(lambda x: x[0] not in persons, people.items()))
         if len(filtered_people) == 0:
             print("No hay personas disponibles para añadir al equipo ")
+            input('Presione Enter para continuar...')
             return 0
 
-        for i, person in enumerate(filtered_people):
-            print(i + 1, end=".\n")
-            show_person(person)
-            print("----------------")
-
-        person_id = input("Elige numero de persona que quiere agregar a su equipo: ")
-
-        while person_id not in [str(i) for i in range(1, len(filtered_people) + 1)]:
-            print(f"Tiene que ingresar un numero entre 1 y {len(filtered_people)}\n")
-            person_id = input("Elige numero de persona que quiere agregar a su equipo: ")
-        person_id = int(person_id)
-        if person_id > len(filtered_people) or person_id < 1:
-            print("Numero incorrecto")
-            continue
-
-        persons.append(filtered_people[person_id - 1])
+        person_id = utils.choose_id(filtered_people, "Elige numero de persona que quiere agregar a su equipo: ")
+        if person_id == '-1':
+            return 0
+        persons.append(person_id)
         print( "\nEsta persona se ha añadido al equipo")
-
-        print("Que quieres hacer ?\n"
-              "1. Agregar persona una mas\n"
-              "2. Terminar\n: ")
-
-        n = input()
-
-        while n not in ('1', '2'):
-            print("Tiene que ingresar un numero entre 1 y 2\n")
-            print("elige accion que quieres hacer:")
-            n = input()
-
-        n = int(n)
-
-        if n == 2:
+        if len(filtered_people) == 1:
             new_team = {
                 "name": name,
-                "persons": persons
+                "person_ids": persons
             }
-            teams.append(new_team)
+            teams[str(teams_next_id)] = new_team
+            dt.teams_next_id += 1
             print("Nuevo equipo ha creado con exito!")
-            break
+            input('Presione Enter para continuar...')
+            return 0
+        options = ["  Agregar persona una mas\n",
+              "  Continuar\n: "]
+        option, ind = utils.choose(options, "Que quieres hacer ?")
+        if option == utils.GO_BACK_STR:
+            go_begin()
+        if ind == 1:
+            new_team = {
+                "name": name,
+                "person_ids": persons
+            }
+            teams_next_id = 1
+            if len(people.keys()) != 0:
+                teams_next_id = max(map(int, teams.keys())) + 1
+            teams[str(teams_next_id)] = new_team
+            print("Nuevo equipo ha creado con exito!")
+            return 0
 
 
 def go_begin():
@@ -76,6 +78,9 @@ def remove_team(team_id):
     """
     utils.clear_console()
     teams.pop(team_id)
+    for id in tasks.keys():
+        if tasks[id]['team_id'] == team_id:
+            tasks[id]['team_id'] = -1
     print("El equipo borro")
 
 
@@ -94,23 +99,17 @@ def add_person_to_team(team_id):
        Añade una persona al equipo seleccionado.
     """
     utils.clear_console()
-    filtered_people = list(filter(lambda x: x not in teams[team_id]['persons'], people))
-    for i, person in enumerate(filtered_people):
-        print(i + 1, end=".\n")
-        show_person(person)
+    filtered_people = dict(filter(lambda x: x[0] not in teams[team_id]['person_ids'], people.items()))
+    for id in filtered_people.keys():
+        print(id, end=".\n")
+        show_person(id)
         print("----------------")
 
-    person_id = input("Elige numero de person que quiere agregar a su equipo: ")
-    while person_id not in range(1, len(filtered_people) + 1):
-        print(f"Tiene que ingresar un numero entre 1 y {filtered_people + 1}\n")
-        person_id = input()
-    person_id = int(person_id)
-
-    if person_id > len(filtered_people) or person_id < 1:
-        print("Numero incorrecto")
+    person_id = utils.choose_id(filtered_people, 'Elija la persona que quiere agregar a su equipo: ')
+    if person_id == '-1':
         return 0
-
-    print(show_person(filtered_people[person_id - 1]), "\n Esta persona se ha añadido al equipo")
+    print(show_person(person_id), "se ha añadido al equipo")
+    input('Presione Enter para continuar...')
 
 
 def show_team(team_id):
@@ -119,17 +118,10 @@ def show_team(team_id):
     """
     print("Equipo: ", teams[team_id]['name'])
     print("Miembros del equipo:")
-    for person in teams[team_id]['persons']:
-        print(f'\t{person["name"]} {person["surname"]}')
+    for person_id in teams[team_id]['person_ids']:
+        print(f'\t{people[person_id]["name"]}')
     print("----------------")
-
-
-def show_teams():
-    utils.clear_console()
-    print("Lista de tus equipos:")
-    for id in range(len(teams)):
-        show_team(id)
-    input("Presiona Enter para continuar...")
+    input("Pulse ENTER para continuar")
 
 
 def manage_team(team_id):
@@ -137,47 +129,34 @@ def manage_team(team_id):
         Administra un equipo seleccionado, ofreciendo opciones para eliminar, cambiar nombre, añadir personas o volver al inicio.
     """
     utils.clear_console()
-    actions = {"borrar equipo": remove_team,
-               "cambiar nombre de equipo": change_team_name,
-               "agregar nueva persona ": add_person_to_team,
-               "eliminar a una persona del equipo": remove_from_team,
-               "ver estadistica": show_team_stats,
-               "volver a inicio": go_begin}
+    actions = {"Borrar equipo": remove_team,
+               "Cambiar nombre de equipo": change_team_name,
+               "Agregar nueva persona ": add_person_to_team,
+               "Eliminar una persona del equipo": remove_from_team,
+               "Mostrar estadistica": show_team_stats,}
 
-    print("elige accion que quieres hacer:")
-    for i, action in enumerate(actions.keys()):
-        print(f"{i + 1}: {action}")
+    input_msg = "Elija que quiere hacer:"
+    act, act_num = utils.choose(list(actions.keys()), input_msg)
 
-    act = input()
-    while act not in [str(i + 1) for i in range(len(actions.keys()))]:
-        print("Tiene que ingresar un numero entre 1 y 6\n")
-        print("elige accion que quieres hacer:")
-        act = input()
-
-    act = int(act)
-    if act < 1 or act > len(actions.keys()):
-        print('incorrect numero de accion')
-        return 0
-    action = actions[list(actions.keys())[act - 1]]
-    if act == 6:
+    if act == utils.GO_BACK_STR:
         go_begin()
     else:
-        action(team_id)
+        action = actions[act](team_id)
 
 
 def remove_from_team(team_id):
     utils.clear_console()
-    for id, person in enumerate(teams[team_id]['persons']):
-        print(id + 1, end=". ")
-        show_person(person)
+    for i, id in enumerate(teams[team_id]['person_ids']):
+        print(i + 1, end=". ")
+        show_person(id)
         print("---------")
 
     n = input("Ingrese el número de la persona que desea eliminar del equipo.")
-    while n not in [str(i + 1) for i in range(len(teams[team_id]['persons']))]:
+    while n not in [str(i + 1) for i in range(len(teams[team_id]['person_ids']))]:
         print("numero incorrecto")
         n = input("Ingrese el número de la persona que desea eliminar del equipo")
 
-    teams[team_id]['persons'].pop(int(n) - 1)
+    teams[team_id]['person_ids'].pop(int(n) - 1)
     utils.clear_console()
     print("La persona ha sido eliminada del equipo con éxito")
     print("Estado actual del equipo")
@@ -186,17 +165,18 @@ def remove_from_team(team_id):
 
 def print_top_teams():
     stats = {}
-    for team in teams:
-        stats[team['name']] = 0
-        task_cnt = 0
-        for task in tasks:
-            if task['team'] == team and task['status'] == tasks_mod.STATUS_DONE:
-                stats[team['name']] += task['priority'] * min(1, datetime.strptime(task['done_at'], "%d/%m/%Y") - datetime.strptime(task['do_until'], "%d/%m/%Y"))/30
-                task_cnt += 1
-        try:
-            stats[team['name']] /= task_cnt
-        except ZeroDivisionError:
-            stats[team['name']] = 0
+    for team_id in teams.keys():
+        if team_id != '-1':
+            stats[teams[team_id]['name']] = 0
+            task_cnt = 0
+            for task_id in tasks.keys():
+                if tasks[task_id]['team_id'] == id and tasks[task_id]['status'] == tasks_mod.STATUS_DONE:
+                    stats[teams[team_id]['name']] += tasks[task_id]['priority'] * min(1, datetime.strptime(tasks[task_id]['done_at'], "%d/%m/%Y") - datetime.strptime(tasks[task_id]['do_until'], "%d/%m/%Y"))/30
+                    task_cnt += 1
+            try:
+                stats[teams[team_id]['name']] /= task_cnt
+            except ZeroDivisionError:
+                stats[teams[team_id]['name']] = 0
     sorted_teams = [k for k, v in sorted(stats.items(), key=lambda item: item[1])][:10]
     for i, team_name in enumerate(sorted_teams):
         print(f"{i+1}. {team_name}")
@@ -204,14 +184,10 @@ def print_top_teams():
 
 
 def show_team_stats(team_id):
-    print(team_id)
-    input()
     done_per_month = []
     late_per_month = []
     months = []
-    sorted_tasks = sorted(filter(lambda task: task['team']['name'] == teams[team_id]['name'] and task['status'] == tasks_mod.STATUS_DONE  and datetime.today() - datetime.strptime(task['done_at'], "%d/%m/%Y") <= timedelta(days=366), tasks), key=lambda task: datetime.strptime(task['done_at'], "%d/%m/%Y"))
-    print(sorted_tasks)
-    input()
+    sorted_tasks = sorted(filter(lambda task: task['team_id'] == team_id and task['status'] == tasks_mod.STATUS_DONE  and datetime.today() - datetime.strptime(task['done_at'], "%d/%m/%Y") <= timedelta(days=366), tasks.values()), key=lambda task: datetime.strptime(task['done_at'], "%d/%m/%Y"))
     if len(sorted_tasks) == 0:
         print('Ese equipo todavia no hizo tareas')
         return
@@ -234,7 +210,6 @@ def show_team_stats(team_id):
         if datetime.strptime(task['done_at'], "%d/%m/%Y") > datetime.strptime(task['do_until'], "%d/%m/%Y"):
             cnt_late += 1
 
-
     done_per_month.append(cnt_done)
     late_per_month.append(cnt_late)
     plt.plot(months, done_per_month)
@@ -244,6 +219,8 @@ def show_team_stats(team_id):
     plt.ylabel('Cantidad de Tareas')
     plt.legend(['Tareas hechas', 'Hecho con Retraso'])
     plt.show()
+    input("Pulse ENTER para continuar")
+
 
 
 def manage_teams():
@@ -253,54 +230,51 @@ def manage_teams():
         Muestra los equipos existentes y permite al usuario elegir una acción.
     """
     utils.clear_console()
-    print("\nEquipos: ")
-    for team in teams:
-        print("Nombre del equipo:", team['name'])
-        print("Miembros del equipo: ", end='')
-        for person in team['persons']:
-            print(f"{person['name']} {person['surname']}", end=", ")
-        print("\n----------------")
+    input_msg = "Elija accion que quieres hacer"
+    actions = ["Agregar nueva equipo",
+               "Manejar un equipo",
+               "Ver equipos",
+               "Ver equipos mas efectivos"]
+    act, act_num = utils.choose(actions, input_msg)
+    if act_num == 0:
+        if people[utils.get_session()['id']]['role']<2:
+            create_team()
+        else:
+            print("No tienes suficientes permisos para realizar esta acción")
+            input("Pulse ENTER para continuar")
+            return 0
 
-    actions = {"Agregar nueva equipo": create_team,
-               "Manejar un equipo": manage_team,
-               'Ver equipos': show_teams,
-               "Ver equipos mas efectivos": print_top_teams,
-               "Volver a inicio": go_begin}
 
-    print("Elige accion que quieres hacer:")
-
-    for i, action in enumerate(actions.keys()):
-        print(f"{i + 1}: {action}")
-    act = input()
-    while act not in ('1', '2', '3', '4', '5'):
-        print("Tiene que ingresar un numero entre 1 y 5\n")
-        print("elige accion que quieres hacer:")
-
-        act = input()
-    act = int(act)
-    if act == 1:
-        create_team()
-    elif act == 2:
+    elif act_num == 1:
         if len(teams) == 0:
             print("En primer lugar, cree un nuevo equipo ")
             return 0
+        user_id = utils.get_session()['id']
+        if people[user_id]['role']==1:
+            filter_func = lambda item: user_id in item[1].get("person_ids", [])
+            id = utils.choose_id(teams, "Elija el id del equipo que desea modificar: ",filter_func=filter_func)
+            if id == '-1':
+                return 0
+            manage_team(id)
+        elif people[user_id]['role']==0:
+            id = utils.choose_id(teams, "Elija el id del equipo que desea modificar: ",)
+            if id == '-1':
+                return 0
+            manage_team(id)
+        else:
+            print("No tienes suficientes permisos para realizar esta acción")
+            input("Pulse ENTER para continuar")
+            return 0
+    elif act_num == 2:
+        print(teams)
+        id = utils.choose_id(teams, 'Elija un equipo, para ver mas informacion: ')
+        if id == '-1':
+            return 0
+        show_team(id)
 
-        print("ingrese el número del equipo que desea modificar")
-        for i, team in enumerate(teams):
-            print(f"{i + 1}: {team['name']}")
-        id = int(input())
-        manage_team(id - 1)
 
-    elif act == 3:
-        show_teams()
-
-    elif act == 4:
-
+    elif act_num == 3:
         print_top_teams()
 
-    elif act == 5:
-        go_begin()
-    
     else:
-        print("error. action incorrect")
-        return 0
+        go_begin()

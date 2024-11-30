@@ -1,43 +1,46 @@
+import pick
+
 import utils
+from src.authorization import authorization, close_session
+from src.people.profile import manage_profile
 from src.people.people import manage_people, people
 from src.tasks.tasks import manage_tasks, tasks
 from src.teams.teams import manage_teams, teams
 
-"""
-добавить
-Рекурсия 
-тесты 
-диаграммы 
-фикс удаления данных
-"""
+
 def main():
+
     actions = {
-        '1': manage_people,
-        '2': manage_teams,
-        '3': manage_tasks
+        'Manejar mi Perfil': manage_profile,
+        # 'Manejar Personas': manage_people,
+        'Manejar Equipos': manage_teams,
+        'Manejar Tareas': manage_tasks,
+        'Terminar el Programa': 0
     }
-    try:
-        while True:
-            utils.clear_console()
-            cmd = input(
-                'Ingrese que quiere hacer:\n1. Manejar Personas\n2. Manejar Equipos\n3. Manejar Tareas\n4. Terminar el programa\n')
-            while cmd not in ('1', '2', '3', '4'):
-                print("Tiene que ingresar un numero entre 1 y 4\n")
-                cmd = input()
-
-            if cmd == '4':
-                utils.save_to_json_file(tasks, "src/tasks/tasks.json")
-                utils.save_to_json_file(teams, "src/teams/teams.json")
-                utils.save_to_json_file(people, "src/people/people.json")
-                return
-
-            actions[cmd]()
+    close_session()
+    # try:
+    while True:
+        utils.clear_console()
+        if len(utils.get_session()) == 0:
+            utils.save_to_json_file(authorization(), "src/session.json")
+        input_msg = "Elija que quiere hacer"
+        options = list(actions.keys())
+        act, act_num = pick.pick(options, input_msg, indicator='=>')
+        if act_num == len(options) - 1:
+            utils.save_to_json_file(tasks, "src/tasks/tasks.json")
+            utils.save_to_json_file(teams, "src/teams/teams.json")
+            utils.save_to_json_file(people, "src/people/people.json")
+            close_session()
+            return
+        actions[act]()
 
     except KeyboardInterrupt:
+        print(e)
         # Si se mata al termenal, guarda los datos en un archivo.
         utils.save_to_json_file(tasks, "src/tasks/tasks.json")
         utils.save_to_json_file(teams, "src/teams/teams.json")
         utils.save_to_json_file(people, "src/people/people.json")
+        close_session()
 
 
 if __name__ == '__main__':

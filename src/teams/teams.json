@@ -1,1 +1,1 @@
-[{"name": "123", "persons": [{"name": "Arsenii", "surname": "Abramos", "age": 19, "specialization": "Junior programador"}, {"name": "Daniil", "surname": "Igoshev", "age": 19, "specialization": "Team lid"}]}]
+{"1": {"name": "myteam", "person_ids": ["1", "3"]}, "-1": {"name": "No assingada", "person_ids": []}, "2": {"name": "test", "person_ids": ["3"]}}
