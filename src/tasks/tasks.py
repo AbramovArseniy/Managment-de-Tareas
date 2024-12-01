@@ -1,8 +1,5 @@
 from datetime import datetime
-import time
 
-import src.datos as dt
-import utils
 from src.datos import *
 
 task_tmpl = {
@@ -73,16 +70,20 @@ def manage_tasks():
       Solicita al usuario la acción que quiere realizar y llama a la función correspondiente.
     """
     utils.clear_console()
+    user_id = utils.get_session()["id"]
+
     actions = [
-        create_task,
         manage_task,
         filter_tasks,
         go_back,
     ]
     input_msg = "Elija que quiere hacer"
-    options = ["  Agregar tarea",
-               "  Manejar tarea",
+    options = ["  Manejar tarea",
                "  Ver tareas filtradas"]
+
+    if people[user_id]['role'] < 2:
+        actions = [create_task] + actions
+        options = ["  Agregar tarea"] + options
     opt, ind = utils.choose(options, input_msg)
     if opt == utils.GO_BACK_STR:
         return 0
@@ -96,14 +97,15 @@ def manage_task():
         input('Pressiona Enter para volver a menu...')
         return
     actions = [
-        change_task,
-        delete_task,
-        assign_team
-    ]
+        change_task]
+
     input_msg = "Elija que quiere hacer"
-    options = ["  Cambiar datos de tarea",
-               "  Borrar tarea",
-               "  Assingar tarea a un equipo"]
+    options = ["  Cambiar datos de tarea"]
+
+    user_id = utils.get_session()["id"]
+    if people[user_id]['role'] < 2:
+        actions = actions + [delete_task, assign_team]
+        options = options + ["  Borrar tarea", "  Assingar tarea a un equipo"]
     opt, ind = utils.choose(options, input_msg)
     if opt == utils.GO_BACK_STR:
         return 0
@@ -192,6 +194,7 @@ def filter_tasks():
                    "  En Revision",
                    "  Hecho"]
         opt, status = utils.choose(options, input_msg)
+
         filter_func = lambda task: task[1]['status'] == status
     elif ind == 2:
         team_id = utils.choose_id(teams, "Elija el equipo")
@@ -224,7 +227,8 @@ def delete_task():
     print("Tarea era borrada con exito")
 
 
-def change_task():
+def \
+        change_task():
     """
         Modifica las propiedades de una tarea seleccionada (nombre, descripción, prioridad o estado).
     """
@@ -237,20 +241,23 @@ def change_task():
         return 0
     task = tasks[task_id]
     input_msg = "Elija que quiere cambiar en la tarea:"
-    options = ["  Nombre",
-               "  Descripcion",
-               "  Prioridad",
-               "  Estado",
-               "  Fecha de Deadline"]
+    options = [
+        "  Estado", ]
+
+    if people[utils.get_session()['id']]['role'] < 2:
+        options += ["  Nombre",
+                    "  Descripcion",
+                    "  Prioridad",
+                    "  Fecha de Deadline"]
     opt, ind = utils.choose(options, input_msg)
-    if ind == 0:
+    if ind == 1:
         new_name = input('Ingrese el nuevo nombre de la tarea: ')
         task['name'] = new_name
-    elif ind == 1:
+    elif ind == 2:
         new_desc = input('Ingrese la nueva descripcion de la tarea: ')
         task['description'] = new_desc
 
-    elif ind == 2:
+    elif ind == 3:
         input_msg = "Elija la prioridad"
         options = ["  Baja",
                    "  Media",
@@ -259,7 +266,7 @@ def change_task():
 
         task['priority'] = new_prio
 
-    elif ind == 3:
+    elif ind == 0:
         input_msg = "Elija el estado"
         options = ["  Para Asignar",
                    "  En Progreso",
@@ -270,17 +277,17 @@ def change_task():
         if new_status == STATUS_DONE:
             task['done_at'] = datetime.now().strftime('%d/%m/%Y')
 
-    elif ind == 4:
-        is_valid = False
-        while not is_valid:
-            new_date =  input('Ingrese la fecha en formato DD/MM/YYYY:')
-
-            try:
-                datetime.strptime(new_date, '%d/%m/%Y')
-                is_valid = True
-                task['do_until'] = new_date
-            except ValueError:
-                print('Formato de fecha es incorecto.')
+    # elif opt == "Volver al inicio":
+    #     is_valid = False
+    #     while not is_valid:
+    #         new_date =  input('Ingrese la fecha en formato DD/MM/YYYY:')
+    #
+    #         try:
+    #             datetime.strptime(new_date, '%d/%m/%Y')
+    #             is_valid = True
+    #             task['do_until'] = new_date
+    #         except ValueError:
+    #             print('Formato de fecha es incorecto.')
     else:
         return 0
 
