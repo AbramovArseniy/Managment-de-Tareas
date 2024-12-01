@@ -78,12 +78,12 @@ def manage_tasks():
         go_back,
     ]
     input_msg = "Elija que quiere hacer"
-    options = ["  Manejar tarea",
-               "  Ver tareas filtradas"]
+    options = ["Manejar tarea",
+               "Ver tareas filtradas"]
 
     if people[user_id]['role'] < 2:
         actions = [create_task] + actions
-        options = ["  Agregar tarea"] + options
+        options = ["Agregar tarea"] + options
     opt, ind = utils.choose(options, input_msg)
     if opt == utils.GO_BACK_STR:
         return 0
@@ -100,12 +100,12 @@ def manage_task():
         change_task]
 
     input_msg = "Elija que quiere hacer"
-    options = ["  Cambiar datos de tarea"]
+    options = ["Cambiar datos de tarea"]
 
     user_id = utils.get_session()["id"]
     if people[user_id]['role'] < 2:
         actions = actions + [delete_task, assign_team]
-        options = options + ["  Borrar tarea", "  Assingar tarea a un equipo"]
+        options = options + ["Borrar tarea", "Assingar tarea a un equipo"]
     opt, ind = utils.choose(options, input_msg)
     if opt == utils.GO_BACK_STR:
         return 0
@@ -145,9 +145,9 @@ def create_task():
         name = input('Ingrese nombre de la tarea: ')
     desc = input('Ingrese descripcion de la tarea: ')
     input_msg = "Elija la prioridad"
-    options = ["  Baja",
-               "  Media",
-               "  Alta"]
+    options = ["Baja",
+               "Media",
+               "Alta"]
     opt, prio = utils.choose(options, input_msg)
     if prio == utils.GO_BACK_STR:
         return 0
@@ -174,25 +174,25 @@ def filter_tasks():
         input('Pressiona Enter para volver a menu...')
         return
     input_msg = "Por qué quiere filtrar las tareas?"
-    options = ["  Prioridad",
-               "  Estado",
-               "  Equipo",
-               "  Ver Todas"]
+    options = ["Prioridad",
+               "Estado",
+               "Equipo",
+               "Ver Todas"]
     opt, ind = utils.choose(options, input_msg)
     filter_func = lambda x: True
     if ind == 0:
         input_msg = "Elija la prioridad"
-        options = ["  Baja",
-                   "  Media",
-                   "  Alta"]
+        options = ["Baja",
+                   "Media",
+                   "Alta"]
         opt, prio = utils.choose(options, input_msg)
         filter_func = lambda task: task[1]['priority'] == prio
     elif ind == 1:
         input_msg = "Elija el estado"
-        options = ["  Para Asignar",
-                   "  En Progreso",
-                   "  En Revision",
-                   "  Hecho"]
+        options = ["Para Asignar",
+                   "En Progreso",
+                   "En Revision",
+                   "Hecho"]
         opt, status = utils.choose(options, input_msg)
 
         filter_func = lambda task: task[1]['status'] == status
@@ -242,13 +242,13 @@ def \
     task = tasks[task_id]
     input_msg = "Elija que quiere cambiar en la tarea:"
     options = [
-        "  Estado", ]
+        "Estado", ]
 
     if people[utils.get_session()['id']]['role'] < 2:
-        options += ["  Nombre",
-                    "  Descripcion",
-                    "  Prioridad",
-                    "  Fecha de Deadline"]
+        options += ["Nombre",
+                    "Descripcion",
+                    "Prioridad",
+                    "Fecha de Deadline"]
     opt, ind = utils.choose(options, input_msg)
     if ind == 1:
         new_name = input('Ingrese el nuevo nombre de la tarea: ')
@@ -259,19 +259,19 @@ def \
 
     elif ind == 3:
         input_msg = "Elija la prioridad"
-        options = ["  Baja",
-                   "  Media",
-                   "  Alta"]
+        options = ["Baja",
+                   "Media",
+                   "Alta"]
         opt, new_prio = utils.choose(options, input_msg)
 
         task['priority'] = new_prio
 
     elif ind == 0:
         input_msg = "Elija el estado"
-        options = ["  Para Asignar",
-                   "  En Progreso",
-                   "  En Revision",
-                   "  Hecho"]
+        options = ["Para Asignar",
+                   "En Progreso",
+                   "En Revision",
+                   "Hecho"]
         opt, new_status = utils.choose(options, input_msg)
         task['status'] = new_status
         if new_status == STATUS_DONE:

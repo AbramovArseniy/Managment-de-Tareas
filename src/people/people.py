@@ -67,8 +67,17 @@ def create_person():
         if len(people.keys()) != 0:
             people_next_id = max(map(int, people.keys())) + 1
 
-        person = new_person(name, age, role, login, password)
+        person = new_person(name, age, login, password)
         people[str(people_next_id)] = person
+        if role != USER_ROLE_DEV:
+            role_req_next_id = 1
+            if len(role_requests.keys()) != 0:
+                role_req_next_id = max(map(int, role_requests.keys())) + 1
+            role_requests[role_req_next_id] = {
+                "role": role,
+                "person_id": str(people_next_id),
+                "name": f'{name}. Rol: {roles[role]}',
+            }
 
         print('Persona es guardada\n')
         input("Presiona Enter para continuar...")
@@ -79,7 +88,7 @@ def create_person():
         input("Presiona Enter para continuar...")
 
 
-def new_person(name, age, role, login, password):
+def new_person(name, age, login, password):
     """
         Crea un diccionario con los detalles de una persona.
 
@@ -90,7 +99,7 @@ def new_person(name, age, role, login, password):
     person = {
         'name': name,
         'age': age,
-        'role': role,
+        'role': USER_ROLE_DEV,
         'login': login,
         'password': password,
     }
@@ -104,39 +113,21 @@ def manage_people():
        Solicita al usuario que elija una acción y llama a la función correspondiente.
     """
     utils.clear_console()
-    actions = ["Agregar una persona",
-               "Manejar una persona",
-               "Ver la lista de personas",
-               "Volver a inicio"]
+    actions = ["Borrar una persona del sistema",
+               "Manejar solicitudes de roles"]
 
     print("elige accion que quieres hacer:")
 
-    for i, action in enumerate(actions):
-        print(f"{i + 1}: {action}")
-
-    act = input()
-    while act not in ('1', '2', '3', '4'):
-        print("Tiene que ingresar un numero entre 1 y 4\n")
-        print("elige accion que quieres hacer: ")
-
-        act = input()
-
-    act = int(act)
-
-    if act == 1:
-        create_person()
-    elif act == 2:
-        id = utils.choose_id(people, "Elija numero de persona que desea modificar ")
-        if id == '-1':
-            return 0
-        manage_person(id)
-    elif act == 3:
-        utils.print_dict(people)
-    elif act == 4:
-        go_begin()
-    else:
-        print("error")
-        return 0
+    opt, ind = utils.choose(actions, 'Elija que quiere hacer:')
+    if opt == utils.GO_BACK_STR:
+        return None
+    if ind == 0:
+        person_id = utils.choose_id(people, 'Elija la persona que quire borrar')
+        if person_id == '-1':
+            return None
+        remove_person(person_id)
+    elif ind == 1:
+        manage_role_requests()
 
 
 def remove_person(person_id):
@@ -144,10 +135,10 @@ def remove_person(person_id):
         Elimina una persona de la lista 'people' basada en su ID.
     """
     utils.clear_console()
-    print(teams)
     for team_id in teams.keys():
         if person_id in teams[team_id]['person_ids']:
             teams[team_id]['person_ids'].remove(person_id)
+    people.pop(person_id)
 
 
 def change_person_name(id):
@@ -203,3 +194,22 @@ def show_person(id):
           f"Role: {roles[people[id]['role']]}\n"
           f"Edad: {people[id]['age']}\n"
           f"Equipos: {person_teams}")
+
+
+def manage_role_requests():
+    id = utils.choose_id(role_requests, 'Elija la solicitud de rol')
+    while id != '-1':
+        person_id = role_requests[id]['person_id']
+        role = role_requests[id]['role']
+        title = f'{people[person_id]} quiere ser un {roles[role]}'
+        options = ['Aprobar', 'Rechazar']
+        opt, ind = utils.choose(options, title)
+        if opt == utils.GO_BACK_STR:
+            return None
+        if ind == 0:
+            people[person_id]['role'] = role
+            role_requests.pop(id)
+        if ind == 1:
+            role_requests.pop(id)
+        id = utils.choose_id(role_requests, 'Elija la solicitud de rol')
+    return None
