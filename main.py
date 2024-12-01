@@ -33,9 +33,7 @@ def main():
                 close_session()
                 return
             actions[act]()
-
-    except Exception as e:
-        # print(e)
+    except KeyboardInterrupt:
         # Si se mata al termenal, guarda los datos en un archivo.
         utils.save_to_json_file(tasks, "src/tasks/tasks.json")
         utils.save_to_json_file(teams, "src/teams/teams.json")

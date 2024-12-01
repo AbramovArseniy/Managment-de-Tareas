@@ -222,6 +222,7 @@ def show_team_stats(team_id):
     input("Pulse ENTER para continuar")
 
 
+
 def manage_teams():
     """
         Gestiona los equipos, permitiendo agregar nuevos equipos, modificar equipos existentes o volver al inicio.
@@ -242,6 +243,7 @@ def manage_teams():
             print("No tienes suficientes permisos para realizar esta acción")
             input("Pulse ENTER para continuar")
             return 0
+
 
     elif act_num == 1:
         if len(teams) == 0:

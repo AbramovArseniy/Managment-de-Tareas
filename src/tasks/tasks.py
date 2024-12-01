@@ -106,7 +106,6 @@ def manage_task():
     if people[user_id]['role'] < 2:
         actions = actions + [delete_task, assign_team]
         options = options + ["  Borrar tarea", "  Assingar tarea a un equipo"]
-
     opt, ind = utils.choose(options, input_msg)
     if opt == utils.GO_BACK_STR:
         return 0

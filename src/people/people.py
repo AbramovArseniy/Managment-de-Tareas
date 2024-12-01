@@ -1,17 +1,20 @@
-from src.datos import *  # importamos todas objetos de datos.py
 import time
 
-specializations = {
-    1: 'Middle programador',
-    2: 'Senor programador',
-    3: 'Junior programador',
-    4: 'Team lid',
-}
+import utils
+from src.datos import *  # importamos todas objetos de datos.py
+
+USER_ROLE_ADMIN = 0
+USER_ROLE_TEAM_LEAD = 1
+USER_ROLE_DEV = 2
+
+roles = ['Adminstrador',
+    'Team lead',
+    'Desarrollador']
 
 
 def create_person():
     """
-        Crea una nueva persona solicitando al usuario el nombre, apellido, especialización y edad.
+        Crea una nueva persona solicitando al usuario el nombre, apellido, rol y edad.
 
         Luego, añade la persona creada a la lista global 'people'.
 
@@ -21,32 +24,62 @@ def create_person():
 
     utils.clear_console()
     try:
-        name = input('Ingrese nombre completo de la persona: ')
-        while len(name) < 3:
+        name = input('Ingrese su nombre completo o -1 para volver al inicio: ')
+        while len(name) < 3 and name != '-1':
             print("Error. La longitud del nombre debe ser mayor o igual a 3")
-            name = input('Ingrese nombre completo de la persona: ')
+            name = input('Ingrese su nombre completo o -1 para volver al inicio: ')
+        if name == '-1':
+            return None
 
-        for s in specializations.keys():
-            print(f"{s}: {specializations[s]}")
+        opt, role = utils.choose(roles, 'Elija su rol')
+        if opt == utils.GO_BACK_STR:
+            return None
+        ok = False
+        age = 0
+        while not ok:
+            try:
+                age = int(input('Ingrese su edad o -1 para volver al inicio: '))
+                if age == -1:
+                    return None
+                if age < 18  or age > 80:
+                    print("La edad debe ser entre 18 y 80")
+                else:
+                    ok = True
+            except ValueError:
+                print("La edad debe ser un numero")
 
-        specialization = specializations[int(input(f'Ingrese numero de especialidad de la persona: '))]
+        logins = [person['login'] for person in people.values()]
+        login = input('Ingrese su login o -1 para volver al inicio: ')
+        while (len(login) < 3 and login != '-1') or login in logins:
+            if len(login) < 3:
+                print("Error. La longitud del login debe ser mayor o igual a 3")
+            else:
+                print("Error. Este login ya está en uso. Por favor, ingrese otro.")
+            login = input('Ingrese su login o -1 para volver al inicio: ')
+        if login == '-1':
+            return None
 
-        age = int(input(f'Ingrese edad de la persona: '))
-        while age < 18 or age > 80:
-            print("La edad debe ser entre 18 y 80")
-            age = int(input(f'Ingrese edad de la persona: '))
-        people_next_id = max(map(int, people.keys())) + 1
-        person = new_person(name, age, specialization)
+        password = input("Ingrese su contraseña o -1 para volver al inicio:")
+        if password == '-1':
+            return None
+
+        people_next_id = 1
+        if len(people.keys()) != 0:
+            people_next_id = max(map(int, people.keys())) + 1
+
+        person = new_person(name, age, role, login, password)
         people[str(people_next_id)] = person
+
         print('Persona es guardada\n')
-        time.sleep(3)
-        return person
-    except:
+        input("Presiona Enter para continuar...")
+        return {'id': str(people_next_id)}
+    except Exception as e:
+        print(e)
         print("Error al agregar la persona")
         input("Presiona Enter para continuar...")
 
 
-def new_person(name, age, specialization):
+def new_person(name, age, role, login, password):
     """
         Crea un diccionario con los detalles de una persona.
 
@@ -57,7 +90,9 @@ def new_person(name, age, specialization):
     person = {
         'name': name,
         'age': age,
-        'specialization': specialization,
+        'role': role,
+        'login': login,
+        'password': password,
     }
     return person
 
@@ -92,6 +127,8 @@ def manage_people():
         create_person()
     elif act == 2:
         id = utils.choose_id(people, "Elija numero de persona que desea modificar ")
+        if id == '-1':
+            return 0
         manage_person(id)
     elif act == 3:
         utils.print_dict(people)
@@ -153,10 +190,16 @@ def manage_person(id):
     action(id)
 
 
-def show_person(person):
+def show_person(id):
+    utils.clear_console()
     """
         Imprime la información detallada de una persona.
     """
-    print(f"Nombre: {person['name']}\n"
-          f"Specializacion: {person['specialization']}\n"
-          f"Edad: {person['age']}")
+    person_teams = []
+    for team in teams.items():
+        if id in team[1]['person_ids']:
+            person_teams.append(team[1]['name'])
+    print(f"Nombre: {people[id]['name']}\n"
+          f"Role: {roles[people[id]['role']]}\n"
+          f"Edad: {people[id]['age']}\n"
+          f"Equipos: {person_teams}")
