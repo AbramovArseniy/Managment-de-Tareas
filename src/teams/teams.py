@@ -42,8 +42,10 @@ def create_team():
                 "name": name,
                 "person_ids": persons
             }
+            teams_next_id = 1
+            if len(people.keys()) != 0:
+                teams_next_id = max(map(int, teams.keys())) + 1
             teams[str(teams_next_id)] = new_team
-            dt.teams_next_id += 1
             print("Nuevo equipo ha creado con exito!")
             input('Presione Enter para continuar...')
             return 0
@@ -145,17 +147,10 @@ def manage_team(team_id):
 
 def remove_from_team(team_id):
     utils.clear_console()
-    for i, id in enumerate(teams[team_id]['person_ids']):
-        print(i + 1, end=". ")
-        show_person(id)
-        print("---------")
-
-    n = input("Ingrese el número de la persona que desea eliminar del equipo.")
-    while n not in [str(i + 1) for i in range(len(teams[team_id]['person_ids']))]:
-        print("numero incorrecto")
-        n = input("Ingrese el número de la persona que desea eliminar del equipo")
-
-    teams[team_id]['person_ids'].pop(int(n) - 1)
+    person_id = utils.choose_id(people, 'Elija la persona que quiere eliminar del equipo:', lambda item: item[0] in teams[team_id]['person_ids'])
+    if person_id == '-1':
+        return None
+    teams[team_id]['person_ids'].remove(person_id)
     utils.clear_console()
     print("La persona ha sido eliminada del equipo con éxito")
     print("Estado actual del equipo")
@@ -177,6 +172,7 @@ def print_top_teams():
             except ZeroDivisionError:
                 stats[teams[team_id]['name']] = 0
     sorted_teams = [k for k, v in sorted(stats.items(), key=lambda item: item[1])][:10]
+    print('Aca estan 10 equipos, mas effectivos')
     for i, team_name in enumerate(sorted_teams):
         print(f"{i+1}. {team_name}")
     input('Presione Enter para continuar...')
@@ -189,6 +185,7 @@ def show_team_stats(team_id):
     sorted_tasks = sorted(filter(lambda task: task['team_id'] == team_id and task['status'] == tasks_mod.STATUS_DONE  and datetime.today() - datetime.strptime(task['done_at'], "%d/%m/%Y") <= timedelta(days=366), tasks.values()), key=lambda task: datetime.strptime(task['done_at'], "%d/%m/%Y"))
     if len(sorted_tasks) == 0:
         print('Ese equipo todavia no hizo tareas')
+        input("Presiona Enter para continuar...")
         return
     plt.rcParams.update({'font.size': 7})
     cnt_done = 0
