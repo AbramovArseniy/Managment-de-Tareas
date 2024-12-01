@@ -137,7 +137,6 @@ def manage_team(team_id):
 
     input_msg = "Elija que quiere hacer:"
     act, act_num = utils.choose(list(actions.keys()), input_msg)
-
     if act == utils.GO_BACK_STR:
         go_begin()
     else:
@@ -231,21 +230,18 @@ def manage_teams():
     """
     utils.clear_console()
     input_msg = "Elija accion que quieres hacer"
-    actions = ["Agregar nueva equipo",
-               "Manejar un equipo",
-               "Ver equipos",
+    actions = ["Ver equipos",
                "Ver equipos mas efectivos"]
+    if people[utils.get_session()['id']]['role'] < 2:
+        actions = ["Agregar nueva equipo", "Manejar un equipo"] + actions
+
     act, act_num = utils.choose(actions, input_msg)
-    if act_num == 0:
-        if people[utils.get_session()['id']]['role']<2:
-            create_team()
-        else:
-            print("No tienes suficientes permisos para realizar esta acción")
-            input("Pulse ENTER para continuar")
-            return 0
+    if act == utils.GO_BACK_STR:
+        return None
+    if act == "Agregar nueva equipo":
+        create_team()
 
-
-    elif act_num == 1:
+    elif act == "Manejar un equipo":
         if len(teams) == 0:
             print("En primer lugar, cree un nuevo equipo ")
             return 0
@@ -261,11 +257,7 @@ def manage_teams():
             if id == '-1':
                 return 0
             manage_team(id)
-        else:
-            print("No tienes suficientes permisos para realizar esta acción")
-            input("Pulse ENTER para continuar")
-            return 0
-    elif act_num == 2:
+    elif act == "Ver equipos":
         print(teams)
         id = utils.choose_id(teams, 'Elija un equipo, para ver mas informacion: ')
         if id == '-1':
@@ -273,8 +265,5 @@ def manage_teams():
         show_team(id)
 
 
-    elif act_num == 3:
+    elif act == "Ver equipos mas efectivos":
         print_top_teams()
-
-    else:
-        go_begin()

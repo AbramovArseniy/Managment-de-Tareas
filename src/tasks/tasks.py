@@ -78,12 +78,12 @@ def manage_tasks():
         go_back,
     ]
     input_msg = "Elija que quiere hacer"
-    options = ["  Manejar tarea",
-               "  Ver tareas filtradas"]
+    options = ["Manejar tarea",
+               "Ver tareas"]
 
     if people[user_id]['role'] < 2:
         actions = [create_task] + actions
-        options = ["  Agregar tarea"] + options
+        options = ["Agregar tarea"] + options
     opt, ind = utils.choose(options, input_msg)
     if opt == utils.GO_BACK_STR:
         return 0
@@ -96,16 +96,15 @@ def manage_task():
         print('Todavia no hay tareas\n')
         input('Pressiona Enter para volver a menu...')
         return
-    actions = [
-        change_task]
+    actions = [change_task]
 
     input_msg = "Elija que quiere hacer"
-    options = ["  Cambiar datos de tarea"]
+    options = ["Cambiar datos de tarea"]
 
     user_id = utils.get_session()["id"]
     if people[user_id]['role'] < 2:
         actions = actions + [delete_task, assign_team]
-        options = options + ["  Borrar tarea", "  Assingar tarea a un equipo"]
+        options = options + ["Borrar tarea", "Assingar tarea a un equipo"]
     opt, ind = utils.choose(options, input_msg)
     if opt == utils.GO_BACK_STR:
         return 0
@@ -145,9 +144,9 @@ def create_task():
         name = input('Ingrese nombre de la tarea: ')
     desc = input('Ingrese descripcion de la tarea: ')
     input_msg = "Elija la prioridad"
-    options = ["  Baja",
-               "  Media",
-               "  Alta"]
+    options = ["Baja",
+               "Media",
+               "Alta"]
     opt, prio = utils.choose(options, input_msg)
     if prio == utils.GO_BACK_STR:
         return 0
@@ -174,29 +173,33 @@ def filter_tasks():
         input('Pressiona Enter para volver a menu...')
         return
     input_msg = "Por qué quiere filtrar las tareas?"
-    options = ["  Prioridad",
-               "  Estado",
-               "  Equipo",
-               "  Ver Todas"]
+    options = ["Prioridad",
+               "Estado",
+               "Equipo",
+               "Ver Todas"]
     opt, ind = utils.choose(options, input_msg)
     filter_func = lambda x: True
-    if ind == 0:
+    if opt == "Prioridad":
         input_msg = "Elija la prioridad"
-        options = ["  Baja",
-                   "  Media",
-                   "  Alta"]
+        options = ["Baja",
+                   "Media",
+                   "Alta"]
         opt, prio = utils.choose(options, input_msg)
+        if opt == utils.GO_BACK_STR:
+            return None
         filter_func = lambda task: task[1]['priority'] == prio
-    elif ind == 1:
+    elif opt == "Estado":
         input_msg = "Elija el estado"
-        options = ["  Para Asignar",
-                   "  En Progreso",
-                   "  En Revision",
-                   "  Hecho"]
+        options = ["Para Asignar",
+                   "En Progreso",
+                   "En Revision",
+                   "Hecho"]
         opt, status = utils.choose(options, input_msg)
+        if opt == utils.GO_BACK_STR:
+            return None
 
         filter_func = lambda task: task[1]['status'] == status
-    elif ind == 2:
+    elif opt == "Equipo":
         team_id = utils.choose_id(teams, "Elija el equipo")
         if team_id == '-1':
             go_back()
@@ -227,8 +230,7 @@ def delete_task():
     print("Tarea era borrada con exito")
 
 
-def \
-        change_task():
+def change_task():
     """
         Modifica las propiedades de una tarea seleccionada (nombre, descripción, prioridad o estado).
     """
@@ -241,55 +243,58 @@ def \
         return 0
     task = tasks[task_id]
     input_msg = "Elija que quiere cambiar en la tarea:"
-    options = [
-        "  Estado", ]
+    options = ["Estado",
+        "Descripcion"]
 
     if people[utils.get_session()['id']]['role'] < 2:
-        options += ["  Nombre",
-                    "  Descripcion",
-                    "  Prioridad",
-                    "  Fecha de Deadline"]
+        options += ["Nombre",
+                    "Descripcion",
+                    "Prioridad",
+                    "Fecha de Deadline"]
     opt, ind = utils.choose(options, input_msg)
-    if ind == 1:
+    if opt == "Nombre":
         new_name = input('Ingrese el nuevo nombre de la tarea: ')
         task['name'] = new_name
-    elif ind == 2:
+    elif opt == "Descripcion":
         new_desc = input('Ingrese la nueva descripcion de la tarea: ')
         task['description'] = new_desc
 
-    elif ind == 3:
+    elif opt == "Prioridad":
         input_msg = "Elija la prioridad"
-        options = ["  Baja",
-                   "  Media",
-                   "  Alta"]
+        options = ["Baja",
+                   "Media",
+                   "Alta"]
         opt, new_prio = utils.choose(options, input_msg)
-
+        if opt == utils.GO_BACK_STR:
+            return None
         task['priority'] = new_prio
 
-    elif ind == 0:
+    elif opt == "Estado":
         input_msg = "Elija el estado"
-        options = ["  Para Asignar",
-                   "  En Progreso",
-                   "  En Revision",
-                   "  Hecho"]
+        options = ["Para Asignar",
+                   "En Progreso",
+                   "En Revision",
+                   "Hecho"]
         opt, new_status = utils.choose(options, input_msg)
+        if opt == utils.GO_BACK_STR:
+            return None
         task['status'] = new_status
         if new_status == STATUS_DONE:
             task['done_at'] = datetime.now().strftime('%d/%m/%Y')
 
-    # elif opt == "Volver al inicio":
-    #     is_valid = False
-    #     while not is_valid:
-    #         new_date =  input('Ingrese la fecha en formato DD/MM/YYYY:')
-    #
-    #         try:
-    #             datetime.strptime(new_date, '%d/%m/%Y')
-    #             is_valid = True
-    #             task['do_until'] = new_date
-    #         except ValueError:
-    #             print('Formato de fecha es incorecto.')
+    elif opt == "Fecha de Deadline":
+        is_valid = False
+        while not is_valid:
+            new_date =  input('Ingrese la fecha en formato DD/MM/YYYY:')
+
+            try:
+                datetime.strptime(new_date, '%d/%m/%Y')
+                is_valid = True
+                task['do_until'] = new_date
+            except ValueError:
+                print('Formato de fecha es incorecto.')
     else:
-        return 0
+        return None
 
 
 def print_task_info(task):
