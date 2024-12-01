@@ -47,8 +47,8 @@ def create_team():
             print("Nuevo equipo ha creado con exito!")
             input('Presione Enter para continuar...')
             return 0
-        options = ["  Agregar persona una mas\n",
-              "  Continuar\n: "]
+        options = ["Agregar persona una mas\n",
+              "Continuar\n: "]
         option, ind = utils.choose(options, "Que quieres hacer ?")
         if option == utils.GO_BACK_STR:
             go_begin()
