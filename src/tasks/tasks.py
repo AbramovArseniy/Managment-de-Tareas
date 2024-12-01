@@ -1,5 +1,7 @@
 from datetime import datetime
 
+import utils
+import src.people.people as people_mod
 from src.datos import *
 
 task_tmpl = {
@@ -220,10 +222,15 @@ def delete_task():
         Borra una tarea seleccionada de la lista `tasks`.
     """
     utils.clear_console()
-    if len(tasks) == 0:
-        print('Todavia no hay tareas\n')
-        return
-    task_id = utils.choose_id(tasks, "Elija el Id de la tarea que desea borrar: ")
+    filter_func = lambda task: True
+    user_id = utils.get_session()['id']
+
+    if people[user_id]['role'] == people_mod.USER_ROLE_TEAM_LEAD:
+        users_teams = dict(filter(lambda team: user_id in team[1]['person_ids'], teams.items()))
+        filtered_tasks = dict(filter(lambda task: task[1]['team_id'] in users_teams.keys(), tasks.items()))
+        task_id = utils.choose_id(filtered_tasks, "Elija el Id de la tarea que desea borrar: ")
+    else:
+        task_id = utils.choose_id(tasks, "Elija el Id de la tarea que desea borrar: ")
     if task_id == '-1':
         return 0
     tasks.pop(task_id)
