@@ -26,6 +26,11 @@ def authorization():
 
 
 def sing_in():
+    """
+            Permite a un usuario iniciar sesión.
+
+            Solicita el login y contraseña del usuario, verifica su autenticidad y guarda la sesión.
+    """
     clear_console()
     print("Autenticación")
     login = input("Ingrese su login o -1 para volver al inicio: ")
@@ -50,6 +55,11 @@ def sing_in():
     return {'id': person_id}
 
 def log_out():
+    """
+            Permite al usuario cerrar sesión.
+
+            Limpia la información de la sesión actual del archivo de sesión.
+    """
     opt, ind = pick.pick(['Si', 'No'], '¿Esta seguro que quiere cerrar session?', indicator='>=')
     if ind == 0:
         close_session()

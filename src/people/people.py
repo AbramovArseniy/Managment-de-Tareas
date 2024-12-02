@@ -1,15 +1,15 @@
 import time
-
 import utils
-from src.datos import *  # importamos todas objetos de datos.py
+from src.datos import *  # Importamos todos los objetos de datos.py
 
+# Constantes para definir roles de usuario
 USER_ROLE_ADMIN = 0
 USER_ROLE_TEAM_LEAD = 1
 USER_ROLE_DEV = 2
 
-roles = ['Adminstrador',
-    'Team lead',
-    'Desarrollador']
+roles = ['Administrador',  # Rol de administrador
+         'Team lead',      # Rol de líder del equipo
+         'Desarrollador']  # Rol de desarrollador
 
 
 def create_person():
@@ -21,9 +21,9 @@ def create_person():
         Returns:
             dict: La persona creada.
     """
-
     utils.clear_console()
     try:
+        # Solicitar el nombre completo
         name = input('Ingrese su nombre completo o -1 para volver al inicio: ')
         while len(name) < 3 and name != '-1':
             print("Error. La longitud del nombre debe ser mayor o igual a 3")
@@ -31,23 +31,27 @@ def create_person():
         if name == '-1':
             return None
 
+        # Seleccionar un rol para la persona
         opt, role = utils.choose(roles, 'Elija su rol')
         if opt == utils.GO_BACK_STR:
             return None
         ok = False
         age = 0
+
+        # Validar la edad
         while not ok:
             try:
                 age = int(input('Ingrese su edad o -1 para volver al inicio: '))
                 if age == -1:
                     return None
-                if age < 18  or age > 80:
+                if age < 18 or age > 80:
                     print("La edad debe ser entre 18 y 80")
                 else:
                     ok = True
             except ValueError:
-                print("La edad debe ser un numero")
+                print("La edad debe ser un número")
 
+        # Validar y solicitar login único
         logins = [person['login'] for person in people.values()]
         login = input('Ingrese su login o -1 para volver al inicio: ')
         while (len(login) < 3 and login != '-1') or login in logins:
@@ -59,16 +63,21 @@ def create_person():
         if login == '-1':
             return None
 
+        # Solicitar contraseña
         password = input("Ingrese su contraseña o -1 para volver al inicio:")
         if password == '-1':
             return None
 
+        # Calcular el próximo ID disponible para la nueva persona
         people_next_id = 1
         if len(people.keys()) != 0:
             people_next_id = max(map(int, people.keys())) + 1
 
+        # Crear el objeto de la persona
         person = new_person(name, age, login, password)
         people[str(people_next_id)] = person
+
+        # Manejar solicitudes de roles si el rol no es desarrollador
         if role != USER_ROLE_DEV:
             role_req_next_id = 1
             if len(role_requests.keys()) != 0:
@@ -97,11 +106,11 @@ def new_person(name, age, login, password):
     """
     utils.clear_console()
     person = {
-        'name': name,
-        'age': age,
-        'role': USER_ROLE_DEV,
-        'login': login,
-        'password': password,
+        'name': name,       # Nombre de la persona
+        'age': age,         # Edad de la persona
+        'role': USER_ROLE_DEV,  # Rol predeterminado (Desarrollador)
+        'login': login,     # Login único de la persona
+        'password': password,  # Contraseña de la persona
     }
     return person
 

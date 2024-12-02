@@ -11,6 +11,7 @@ from src.datos import *
 from src.people.people import show_person
 
 
+# Esta función necesita una descripción en español.
 def create_team():
     """
         Crea un nuevo equipo solicitando al usuario un nombre y añadiendo personas al equipo.
@@ -67,6 +68,7 @@ def create_team():
             return 0
 
 
+# Esta función necesita una descripción en español.
 def go_begin():
     """
         Función de marcador de posición para regresar al menú anterior.
@@ -74,6 +76,7 @@ def go_begin():
     return 0
 
 
+# Esta función necesita una descripción en español.
 def remove_team(team_id):
     """
         Elimina un equipo de la lista 'teams' usando su ID.
@@ -86,6 +89,7 @@ def remove_team(team_id):
     print("El equipo borro")
 
 
+# Esta función necesita una descripción en español.
 def change_team_name(team_id):
     """
         Cambia el nombre de un equipo.
@@ -96,24 +100,22 @@ def change_team_name(team_id):
     print(f"El nuevo nombre de equipo es {name}")
 
 
+# Esta función necesita una descripción en español.
 def add_person_to_team(team_id):
     """
        Añade una persona al equipo seleccionado.
     """
     utils.clear_console()
     filtered_people = dict(filter(lambda x: x[0] not in teams[team_id]['person_ids'], people.items()))
-    for id in filtered_people.keys():
-        print(id, end=".\n")
-        show_person(id)
-        print("----------------")
-
     person_id = utils.choose_id(filtered_people, 'Elija la persona que quiere agregar a su equipo: ')
     if person_id == '-1':
         return 0
+    teams[team_id]['person_ids'].append(person_id)
     print(show_person(person_id), "se ha añadido al equipo")
     input('Presione Enter para continuar...')
 
 
+# Esta función necesita una descripción en español.
 def show_team(team_id):
     """
        Muestra la información de un equipo específico, incluyendo su nombre y miembros.
@@ -126,6 +128,7 @@ def show_team(team_id):
     input("Pulse ENTER para continuar")
 
 
+# Esta función necesita una descripción en español.
 def manage_team(team_id):
     """
         Administra un equipo seleccionado, ofreciendo opciones para eliminar, cambiar nombre, añadir personas o volver al inicio.
@@ -145,6 +148,7 @@ def manage_team(team_id):
         action = actions[act](team_id)
 
 
+# Esta función necesita una descripción en español.
 def remove_from_team(team_id):
     utils.clear_console()
     person_id = utils.choose_id(people, 'Elija la persona que quiere eliminar del equipo:', lambda item: item[0] in teams[team_id]['person_ids'])
@@ -157,6 +161,7 @@ def remove_from_team(team_id):
     show_team(team_id)
 
 
+# Esta función necesita una descripción en español.
 def print_top_teams():
     stats = {}
     for team_id in teams.keys():
@@ -164,20 +169,23 @@ def print_top_teams():
             stats[teams[team_id]['name']] = 0
             task_cnt = 0
             for task_id in tasks.keys():
-                if tasks[task_id]['team_id'] == id and tasks[task_id]['status'] == tasks_mod.STATUS_DONE:
-                    stats[teams[team_id]['name']] += tasks[task_id]['priority'] * min(1, datetime.strptime(tasks[task_id]['done_at'], "%d/%m/%Y") - datetime.strptime(tasks[task_id]['do_until'], "%d/%m/%Y"))/30
+                if tasks[task_id]['team_id'] == team_id and tasks[task_id]['status'] == tasks_mod.STATUS_DONE:
+                    delay = datetime.strptime(tasks[task_id]['do_until'], "%d/%m/%Y") - datetime.strptime(tasks[task_id]['done_at'], "%d/%m/%Y")
+                    delay = delay.total_seconds() // (24 * 3600)
+                    stats[teams[team_id]['name']] += tasks[task_id]['priority'] * min(1, delay)/30
                     task_cnt += 1
             try:
                 stats[teams[team_id]['name']] /= task_cnt
             except ZeroDivisionError:
                 stats[teams[team_id]['name']] = 0
-    sorted_teams = [k for k, v in sorted(stats.items(), key=lambda item: item[1])][:10]
+    sorted_teams = [k for k, v in sorted(stats.items(), key=lambda item: item[1], reverse=True)][:10]
     print('Aca estan 10 equipos, mas effectivos')
     for i, team_name in enumerate(sorted_teams):
         print(f"{i+1}. {team_name}")
     input('Presione Enter para continuar...')
 
 
+# Esta función necesita una descripción en español.
 def show_team_stats(team_id):
     done_per_month = []
     late_per_month = []
@@ -219,6 +227,7 @@ def show_team_stats(team_id):
 
 
 
+# Esta función necesita una descripción en español.
 def manage_teams():
     """
         Gestiona los equipos, permitiendo agregar nuevos equipos, modificar equipos existentes o volver al inicio.

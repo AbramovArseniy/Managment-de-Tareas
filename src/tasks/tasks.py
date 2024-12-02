@@ -35,6 +35,7 @@ statuses = [
 ]
 
 
+# Esta función necesita una descripción en español.
 def new_task(name, desc, prio):
     """
     Crea una nueva tarea y la devuelve como un diccionario.
@@ -56,6 +57,7 @@ def new_task(name, desc, prio):
     return task
 
 
+# Esta función necesita una descripción en español.
 def go_back():
     """
         Función de marcador de posición para volver al menú anterior.
@@ -64,6 +66,7 @@ def go_back():
     return 0
 
 
+# Esta función necesita una descripción en español.
 def manage_tasks():
     """
       Administra las tareas, permitiendo agregar, modificar o filtrar tareas.
@@ -91,6 +94,7 @@ def manage_tasks():
     actions[ind]()
 
 
+# Esta función necesita una descripción en español.
 def manage_task():
     utils.clear_console()
     if len(tasks) == 0:
@@ -112,6 +116,7 @@ def manage_task():
     actions[ind]()
 
 
+# Esta función necesita una descripción en español.
 def assign_team():
     """
        Asigna un equipo a una tarea.
@@ -149,6 +154,7 @@ def assign_team():
     tasks[task_id]['status'] = max(STATUS_IN_PROGRESS, tasks[task_id]['status'])
 
 
+# Esta función necesita una descripción en español.
 def create_task():
     """
         Crea una nueva tarea solicitando al usuario el nombre, descripción y prioridad.
@@ -179,6 +185,7 @@ def create_task():
     input("Presiona Enter para continuar...")
 
 
+# Esta función necesita una descripción en español.
 def filter_tasks():
     """
         Filtra las tareas por prioridad, estado o equipo.
@@ -233,6 +240,7 @@ def filter_tasks():
         input('Pressiona Enter para volver a menu...')
 
 
+# Esta función necesita una descripción en español.
 def delete_task():
     """
         Borra una tarea seleccionada de la lista `tasks`.
@@ -253,6 +261,7 @@ def delete_task():
     print("Tarea era borrada con exito")
 
 
+# Esta función necesita una descripción en español.
 def change_task():
     """
         Modifica las propiedades de una tarea seleccionada (nombre, descripción, prioridad o estado).
@@ -319,6 +328,7 @@ def change_task():
         return None
 
 
+# Esta función necesita una descripción en español.
 def print_task_info(task):
     """
        Imprime la información detallada de una tarea específica.
