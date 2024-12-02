@@ -155,7 +155,9 @@ def change_person_name(id):
         Cambia el nombre de una persona en la lista 'people'.
     """
     utils.clear_console()
-    name = input("Ingrese nuevo nombre de persona: ")
+    name = input("Ingrese nuevo nombre de persona o -1 para volver al inicio: ")
+    if name == '-1':
+        return None
     people[id]['name'] = name
     print(f"El nuevo nombre de persona es {name}")
 

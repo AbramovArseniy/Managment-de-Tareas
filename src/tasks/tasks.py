@@ -163,17 +163,21 @@ def create_task():
         Agrega la tarea creada a la lista `tasks`.
     """
     utils.clear_console()
-    name = input('Ingrese nombre de la tarea: ')
+    name = input('Ingrese nombre de la tarea o -1 para volver al inicio: ')
     while name == '':
+        if name == '-1':
+            return None
         print("El nombre no puede ser vacio")
-        name = input('Ingrese nombre de la tarea: ')
-    desc = input('Ingrese descripcion de la tarea: ')
+        name = input('Ingrese nombre de la tarea o -1 para volver al inicio: ')
+    desc = input('Ingrese descripcion de la tarea o -1 para volver al inicio: ')
+    if desc == '-1':
+        return None
     input_msg = "Elija la prioridad"
     options = ["Baja",
                "Media",
                "Alta"]
     opt, prio = utils.choose(options, input_msg)
-    if prio == utils.GO_BACK_STR:
+    if opt == utils.GO_BACK_STR:
         return 0
     task = new_task(name, desc, prio)
 
@@ -277,7 +281,7 @@ def change_task():
     if people[user_id]['role'] < 1:
         filter_func = lambda item: True
 
-    task_id = utils.choose_id(tasks, "Ingrese el Id de la tarea: ", filter_func=filter_func)
+    task_id = utils.choose_id(tasks, "Elija la tarea: ", filter_func=filter_func)
     if task_id == '-1':
         return 0
     task = tasks[task_id]
