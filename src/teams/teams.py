@@ -175,7 +175,7 @@ def print_top_teams():
                 if tasks[task_id]['team_id'] == team_id and tasks[task_id]['status'] == tasks_mod.STATUS_DONE:
                     delay = datetime.strptime(tasks[task_id]['do_until'], "%d/%m/%Y") - datetime.strptime(tasks[task_id]['done_at'], "%d/%m/%Y")
                     delay = delay.total_seconds() // (24 * 3600)
-                    stats[teams[team_id]['name']] += (tasks[task_id]['priority'] + 1) * min(1, delay)/30
+                    stats[teams[team_id]['name']] += (tasks[task_id]['priority'] + 1) * min(1, delay/30)
                     task_cnt += 1
             try:
                 stats[teams[team_id]['name']] /= task_cnt
