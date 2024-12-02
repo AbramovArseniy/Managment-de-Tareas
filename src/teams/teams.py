@@ -133,7 +133,7 @@ def manage_team(team_id):
     utils.clear_console()
     actions = {"Borrar equipo": remove_team,
                "Cambiar nombre de equipo": change_team_name,
-               "Agregar nueva persona ": add_person_to_team,
+               "Agregar una persona a un equipo": add_person_to_team,
                "Eliminar una persona del equipo": remove_from_team,
                "Mostrar estadistica": show_team_stats,}
 
@@ -230,12 +230,12 @@ def manage_teams():
     actions = ["Ver equipos",
                "Ver equipos mas efectivos"]
     if people[utils.get_session()['id']]['role'] < 2:
-        actions = ["Agregar nueva equipo", "Manejar un equipo"] + actions
+        actions = ["Agregar nuevo equipo", "Manejar un equipo"] + actions
 
     act, act_num = utils.choose(actions, input_msg)
     if act == utils.GO_BACK_STR:
         return None
-    if act == "Agregar nueva equipo":
+    if act == "Agregar nuevo equipo":
         create_team()
 
     elif act == "Manejar un equipo":
