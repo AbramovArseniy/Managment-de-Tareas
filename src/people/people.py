@@ -125,7 +125,7 @@ def manage_people():
     actions = ["Borrar una persona del sistema",
                "Manejar solicitudes de roles"]
 
-    print("elige accion que quieres hacer:")
+    print("Elija accion que quiere hacer:")
 
     opt, ind = utils.choose(actions, 'Elija que quiere hacer:')
     if opt == utils.GO_BACK_STR:
@@ -176,14 +176,14 @@ def manage_person(id):
                "cambiar nombre": change_person_name,
                "volver a inicio": go_begin}
 
-    print("elige accion que quieres hacer:")
+    print("Elija accion que quiere hacer:")
     for i, action in enumerate(actions.keys()):
         print(f"{i + 1}: {action}")
 
     act = input()
     while act not in ('1', '2', '3'):
         print("Tiene que ingresar un numero entre 1 y 3\n")
-        print("elige accion que quieres hacer:")
+        print("Elija accion que quiere hacer:")
 
         act = input()
     action = actions[list(actions.keys())[int(act) - 1]]

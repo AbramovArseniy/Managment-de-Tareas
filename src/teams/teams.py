@@ -33,7 +33,7 @@ def create_team():
             input('Presione Enter para continuar...')
             return 0
 
-        person_id = utils.choose_id(filtered_people, "Elige numero de persona que quiere agregar a su equipo: ")
+        person_id = utils.choose_id(filtered_people, "Elija numero de persona que quiere agregar a su equipo: ")
         if person_id == '-1':
             return 0
         persons.append(person_id)
@@ -54,7 +54,7 @@ def create_team():
             return 0
         options = ["Agregar persona una mas\n",
               "Continuar\n: "]
-        option, ind = utils.choose(options, "Que quieres hacer ?")
+        option, ind = utils.choose(options, "Que quiere hacer ?")
         if option == utils.GO_BACK_STR:
             go_begin()
         if ind == 1:
@@ -176,7 +176,7 @@ def print_top_teams():
                 if tasks[task_id]['team_id'] == team_id and tasks[task_id]['status'] == tasks_mod.STATUS_DONE:
                     delay = datetime.strptime(tasks[task_id]['do_until'], "%d/%m/%Y") - datetime.strptime(tasks[task_id]['done_at'], "%d/%m/%Y")
                     delay = delay.total_seconds() // (24 * 3600)
-                    stats[teams[team_id]['name']] += tasks[task_id]['priority'] * min(1, delay)/30
+                    stats[teams[team_id]['name']] += (tasks[task_id]['priority'] + 1) * min(1, delay)/30
                     task_cnt += 1
             try:
                 stats[teams[team_id]['name']] /= task_cnt
@@ -239,7 +239,7 @@ def manage_teams():
         Muestra los equipos existentes y permite al usuario elegir una acción.
     """
     utils.clear_console()
-    input_msg = "Elija accion que quieres hacer"
+    input_msg = "Elija accion que quiere hacer"
     actions = ["Ver equipos",
                "Ver equipos mas efectivos"]
     if people[utils.get_session()['id']]['role'] < 2:
