@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 
 from matplotlib import pyplot as plt
 
-import src.datos as dt
 import src.tasks.tasks as tasks_mod
 import utils
 from src.datos import *
