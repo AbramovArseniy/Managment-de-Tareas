@@ -270,7 +270,13 @@ def change_task():
     if len(tasks) == 0:
         print('Todavia no hay tareas\n')
         return
-    task_id = utils.choose_id(tasks, "Ingrese el Id de la tarea: ")
+    user_id = utils.get_session()['id']
+    users_teams = [team[0] for team in teams.items() if user_id in team[1]['person_ids']]
+    filter_func = lambda item: item[1].get("team_id", []) in users_teams or item[1].get("team_id", []) == "-1"
+    if people[user_id]['role'] < 1:
+        filter_func = lambda item: True
+
+    task_id = utils.choose_id(tasks, "Ingrese el Id de la tarea: ", filter_func=filter_func)
     if task_id == '-1':
         return 0
     task = tasks[task_id]

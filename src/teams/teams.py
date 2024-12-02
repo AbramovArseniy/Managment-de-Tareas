@@ -27,7 +27,7 @@ def create_team():
 
     persons = [utils.get_session()['id']]
     while True:
-        filtered_people = dict(filter(lambda x: x[0] not in persons, people.items()))
+        filtered_people = dict(filter(lambda x: x[0] not in persons and x[1]['role'] > 1, people.items()))
         if len(filtered_people) == 0:
             print("No hay personas disponibles para añadir al equipo ")
             input('Presione Enter para continuar...')
@@ -37,7 +37,9 @@ def create_team():
         if person_id == '-1':
             return 0
         persons.append(person_id)
-        print( "\nEsta persona se ha añadido al equipo")
+        show_person(person_id)
+        print("se ha añadido al equipo")
+
         if len(filtered_people) == 1:
             new_team = {
                 "name": name,
@@ -106,12 +108,14 @@ def add_person_to_team(team_id):
        Añade una persona al equipo seleccionado.
     """
     utils.clear_console()
-    filtered_people = dict(filter(lambda x: x[0] not in teams[team_id]['person_ids'], people.items()))
+    filtered_people = dict(filter(lambda x: x[0] not in teams[team_id]['person_ids'] and x[1]['role'] > 1, people.items()))
+
     person_id = utils.choose_id(filtered_people, 'Elija la persona que quiere agregar a su equipo: ')
     if person_id == '-1':
         return 0
     teams[team_id]['person_ids'].append(person_id)
-    print(show_person(person_id), "se ha añadido al equipo")
+    show_person(person_id)
+    print("se ha añadido al equipo")
     input('Presione Enter para continuar...')
 
 

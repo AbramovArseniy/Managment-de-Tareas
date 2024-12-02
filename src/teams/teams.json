@@ -1,1 +1,21 @@
-{"1": {"name": "myteam", "person_ids": ["1", "3"]}, "-1": {"name": "No assingada", "person_ids": []}, "2": {"name": "test", "person_ids": ["3"]}, "3": {"name": "testEq", "person_ids": ["4", "1", "3"]}, "4": {"name": "Eblan team", "person_ids": ["5", "1"]}}
+{
+  "-1": {
+    "name": "No assingada",
+    "person_ids": []
+  },
+  "0": {
+    "name": "Equipo de Daniil",
+    "person_ids": [
+      "2",
+      "4",
+      "6"
+    ]
+  },
+  "1": {
+    "name": "Equipo de Arsenii",
+    "person_ids": [
+      "3",
+      "5"
+    ]
+  }
+}
