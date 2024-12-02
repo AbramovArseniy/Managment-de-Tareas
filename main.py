@@ -28,7 +28,7 @@ def main():
             utils.clear_console()
             if len(utils.get_session()) == 0:
                 utils.save_to_json_file(authorization(), "src/session.json")
-            input_msg = "Elija que quiere hacer"
+            input_msg = "Bienvenida al programa management de tareas. Elija que quiere hacer"
             options = list(actions.keys())
             user_id = utils.get_session()['id']
             if people[user_id]['role'] != people_mod.USER_ROLE_ADMIN:

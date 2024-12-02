@@ -17,7 +17,7 @@ def authorization():
     }
     session = None
     while session is None:
-        input_msg = "Elija que quiere hacer"
+        input_msg = "¡Bienvenido al programa de gestión de tareas! Elija que quiere hacer"
         options = list(actions.keys())
         act, act_num = pick.pick(options, input_msg, indicator='=>')
         session = actions[act]()

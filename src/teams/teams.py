@@ -19,8 +19,10 @@ def create_team():
         Una vez completado, añade el nuevo equipo a la lista global 'teams'.
     """
     utils.clear_console()
-    name = input('Ingrese nombre de equipo: ')
+    name = input('Ingrese nombre de equipoo -1 para volver al inicio: ')
     while len(name) < 3:
+        if name == '-1':
+            return None
         print("Error. La longitud del nombre debe ser mayor o igual a 3")
         name = input('Ingrese nombre de equipo: ')
 
@@ -96,7 +98,9 @@ def change_team_name(team_id):
         Cambia el nombre de un equipo.
     """
     utils.clear_console()
-    name = input("Ingrese nuevo nombre de equipo: ")
+    name = input("Ingrese nuevo nombre de equipoo -1 para volver al inicio: ")
+    if name == '-1':
+        return None
     teams[team_id]['name'] = name
     print(f"El nuevo nombre de equipo es {name}")
 

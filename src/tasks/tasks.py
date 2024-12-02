@@ -165,10 +165,10 @@ def create_task():
     utils.clear_console()
     name = input('Ingrese nombre de la tarea o -1 para volver al inicio: ')
     while name == '':
-        if name == '-1':
-            return None
         print("El nombre no puede ser vacio")
         name = input('Ingrese nombre de la tarea o -1 para volver al inicio: ')
+    if name == '-1':
+        return None
     desc = input('Ingrese descripcion de la tarea o -1 para volver al inicio: ')
     if desc == '-1':
         return None
@@ -295,10 +295,14 @@ def change_task():
                     "Fecha de Deadline"]
     opt, ind = utils.choose(options, input_msg)
     if opt == "Nombre":
-        new_name = input('Ingrese el nuevo nombre de la tarea: ')
+        new_name = input('Ingrese el nuevo nombre de la tarea o -1 para volver al inicio: ')
+        if new_name == '-1':
+            return None
         task['name'] = new_name
     elif opt == "Descripcion":
-        new_desc = input('Ingrese la nueva descripcion de la tarea: ')
+        new_desc = input('Ingrese la nueva descripcion de la tarea o -1 para volver al inicio: ')
+        if new_desc == '-1':
+            return None
         task['description'] = new_desc
 
     elif opt == "Prioridad":
@@ -327,8 +331,9 @@ def change_task():
     elif opt == "Fecha de Deadline":
         is_valid = False
         while not is_valid:
-            new_date =  input('Ingrese la fecha en formato DD/MM/YYYY:')
-
+            new_date =  input('Ingrese la fecha en formato DD/MM/YYYYo -1 para volver al inicio: ')
+            if new_date == '-1':
+                return None
             try:
                 datetime.strptime(new_date, '%d/%m/%Y')
                 is_valid = True
