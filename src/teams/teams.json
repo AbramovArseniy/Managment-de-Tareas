@@ -1,1 +1,21 @@
-{"1": {"name": "123", "person_ids": ["1", "2"]}, "-1": {"name": "No assingada", "person_ids": []}}
+{
+  "-1": {
+    "name": "No assingada",
+    "person_ids": []
+  },
+  "0": {
+    "name": "Equipo de Daniil",
+    "person_ids": [
+      "2",
+      "4",
+      "6"
+    ]
+  },
+  "1": {
+    "name": "Equipo de Arsenii",
+    "person_ids": [
+      "3",
+      "5"
+    ]
+  }
+}

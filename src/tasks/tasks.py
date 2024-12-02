@@ -1,6 +1,6 @@
 from datetime import datetime
-import time
 
+import src.people.people as people_mod
 import utils
 from src.datos import *
 
@@ -36,6 +36,7 @@ statuses = [
 ]
 
 
+# Esta función necesita una descripción en español.
 def new_task(name, desc, prio):
     """
     Crea una nueva tarea y la devuelve como un diccionario.
@@ -57,6 +58,7 @@ def new_task(name, desc, prio):
     return task
 
 
+# Esta función necesita una descripción en español.
 def go_back():
     """
         Función de marcador de posición para volver al menú anterior.
@@ -65,6 +67,7 @@ def go_back():
     return 0
 
 
+# Esta función necesita una descripción en español.
 def manage_tasks():
     """
       Administra las tareas, permitiendo agregar, modificar o filtrar tareas.
@@ -72,42 +75,49 @@ def manage_tasks():
       Solicita al usuario la acción que quiere realizar y llama a la función correspondiente.
     """
     utils.clear_console()
+    user_id = utils.get_session()["id"]
+
     actions = [
-        create_task,
         manage_task,
         filter_tasks,
         go_back,
     ]
     input_msg = "Elija que quiere hacer"
-    options = ["  Agregar tarea",
-               "  Manejar tarea",
-               "  Ver tareas filtradas"]
+    options = ["Manejar tarea",
+               "Ver tareas"]
+
+    if people[user_id]['role'] < 2:
+        actions = [create_task] + actions
+        options = ["Agregar tarea"] + options
     opt, ind = utils.choose(options, input_msg)
-    if ind == len(options):
+    if opt == utils.GO_BACK_STR:
         return 0
     actions[ind]()
 
 
+# Esta función necesita una descripción en español.
 def manage_task():
     utils.clear_console()
     if len(tasks) == 0:
         print('Todavia no hay tareas\n')
+        input('Pressiona Enter para volver a menu...')
         return
-    actions = [
-        change_task,
-        delete_task,
-        assign_team
-    ]
+    actions = [change_task]
+
     input_msg = "Elija que quiere hacer"
-    options = ["  Cambiar datos de tarea",
-               "  Borrar tarea"
-               "  Assingar tarea a un equipo"]
+    options = ["Cambiar datos de tarea"]
+
+    user_id = utils.get_session()["id"]
+    if people[user_id]['role'] < 2:
+        actions = actions + [delete_task, assign_team]
+        options = options + ["Borrar tarea", "Assingar tarea a un equipo"]
     opt, ind = utils.choose(options, input_msg)
-    if ind == len(options):
+    if opt == utils.GO_BACK_STR:
         return 0
     actions[ind]()
 
 
+# Esta función necesita una descripción en español.
 def assign_team():
     """
        Asigna un equipo a una tarea.
@@ -115,19 +125,37 @@ def assign_team():
        Permite al usuario elegir una tarea y asignarla a un equipo.
     """
     utils.clear_console()
+    user_id = utils.get_session()['id']
+    # user_teams = []
+    # for team in teams.items():
+    #     if user_id in team[1]['person_ids']:
+    #         user_teams.append(team[0])
+    # print(user_teams)
+
+    filter_func = lambda item: item[1].get("team_id", []) == '-1'
+
+    if people[user_id]['role'] < 1:
+        filter_func = lambda item: True
     if len(teams) == 0:
         print('Primero tiene que crear un equipo')
         return
-    task_id = utils.choose_id(tasks, "Elija el Id de la tarea: ")
+    task_id = utils.choose_id(tasks, "Elija el Id de la tarea: ", filter_func=filter_func,
+                              error_message="A todas las tareas se les han asignado comandos.\n")
     if task_id == '-1':
         return 0
-    team_id = utils.choose_id(teams, "Elija el Id del equipo: ")
+    filter_func = lambda item: user_id in item[1].get("person_ids", [])
+    if people[user_id]['role'] < 1:
+        filter_func = lambda item: True
+
+    team_id = utils.choose_id(teams, "Elija el Id del equipo: ", filter_func=filter_func,
+                              error_message="No tienes equipo, primera vez crea tu equipo.\n")
     if team_id == '-1':
         return 0
     tasks[task_id]['team_id'] = team_id
     tasks[task_id]['status'] = max(STATUS_IN_PROGRESS, tasks[task_id]['status'])
 
 
+# Esta función necesita una descripción en español.
 def create_task():
     """
         Crea una nueva tarea solicitando al usuario el nombre, descripción y prioridad.
@@ -141,19 +169,24 @@ def create_task():
         name = input('Ingrese nombre de la tarea: ')
     desc = input('Ingrese descripcion de la tarea: ')
     input_msg = "Elija la prioridad"
-    options = ["  Baja",
-               "  Media",
-               "  Alta"]
+    options = ["Baja",
+               "Media",
+               "Alta"]
     opt, prio = utils.choose(options, input_msg)
-    if prio == len(options):
+    if prio == utils.GO_BACK_STR:
         return 0
     task = new_task(name, desc, prio)
-    tasks_next_id = max(map(int, tasks.keys())) + 1
+
+
+    tasks_next_id = 1
+    if len(tasks.keys()) != 0:
+        tasks_next_id = max(map(int, tasks.keys())) + 1
     tasks[str(tasks_next_id)] = task
     print('Tarea es guardada\n')
-    time.sleep(3)
+    input("Presiona Enter para continuar...")
 
 
+# Esta función necesita una descripción en español.
 def filter_tasks():
     """
         Filtra las tareas por prioridad, estado o equipo.
@@ -163,59 +196,73 @@ def filter_tasks():
     utils.clear_console()
     if len(tasks) == 0:
         print('Todavia no hay tareas\n')
-        time.sleep(3)
+        input('Pressiona Enter para volver a menu...')
         return
     input_msg = "Por qué quiere filtrar las tareas?"
-    options = ["  Prioridad",
-               "  Estado",
-               "  Equipo",
-               "  Ver Todas"]
+    options = ["Prioridad",
+               "Estado",
+               "Equipo",
+               "Ver Todas"]
     opt, ind = utils.choose(options, input_msg)
     filter_func = lambda x: True
-    if ind == 0:
+    if opt == "Prioridad":
         input_msg = "Elija la prioridad"
-        options = ["  Baja",
-                   "  Media",
-                   "  Alta"]
+        options = ["Baja",
+                   "Media",
+                   "Alta"]
         opt, prio = utils.choose(options, input_msg)
+        if opt == utils.GO_BACK_STR:
+            return None
         filter_func = lambda task: task[1]['priority'] == prio
-    elif ind == 1:
+    elif opt == "Estado":
         input_msg = "Elija el estado"
-        options = ["  Para Asignar",
-                   "  En Progreso",
-                   "  En Revision",
-                   "  Hecho"]
+        options = ["Para Asignar",
+                   "En Progreso",
+                   "En Revision",
+                   "Hecho"]
         opt, status = utils.choose(options, input_msg)
+        if opt == utils.GO_BACK_STR:
+            return None
+
         filter_func = lambda task: task[1]['status'] == status
-    elif ind == 2:
+    elif opt == "Equipo":
         team_id = utils.choose_id(teams, "Elija el equipo")
-        filter_func = tasks, lambda task: task[1]['team_id'] == team_id
-    else:
+        if team_id == '-1':
+            go_back()
+        filter_func = lambda task: task[1]['team_id'] == team_id
+    elif opt == utils.GO_BACK_STR:
         return 0
 
     task_id = utils.choose_id(tasks, 'Elija la tarea para ver toda la informacion: ', filter_func)
-    if id == '-1':
+    if task_id == '-1':
         go_back()
     else:
-        print_task_info(tasks[id])
+        print_task_info(tasks[task_id])
         input('Pressiona Enter para volver a menu...')
 
 
+# Esta función necesita una descripción en español.
 def delete_task():
     """
         Borra una tarea seleccionada de la lista `tasks`.
     """
     utils.clear_console()
-    if len(tasks) == 0:
-        print('Todavia no hay tareas\n')
-        return
-    task_id = utils.choose_id(tasks, "Elija el Id de la tarea que desea borrar: ")
+    filter_func = lambda task: True
+    user_id = utils.get_session()['id']
+
+    if people[user_id]['role'] == people_mod.USER_ROLE_TEAM_LEAD:
+        users_teams = dict(filter(lambda team: user_id in team[1]['person_ids'], teams.items()))
+        filtered_tasks = dict(filter(lambda task: task[1]['team_id'] in users_teams.keys(), tasks.items()))
+        task_id = utils.choose_id(filtered_tasks, "Elija el Id de la tarea que desea borrar: ")
+    else:
+        task_id = utils.choose_id(tasks, "Elija el Id de la tarea que desea borrar: ")
     if task_id == '-1':
         return 0
     tasks.pop(task_id)
     print("Tarea era borrada con exito")
 
 
+# Esta función necesita una descripción en español.
 def change_task():
     """
         Modifica las propiedades de una tarea seleccionada (nombre, descripción, prioridad o estado).
@@ -224,45 +271,56 @@ def change_task():
     if len(tasks) == 0:
         print('Todavia no hay tareas\n')
         return
-    task_id = utils.choose_id(tasks, "Ingrese el Id de la tarea: ")
+    user_id = utils.get_session()['id']
+    users_teams = [team[0] for team in teams.items() if user_id in team[1]['person_ids']]
+    filter_func = lambda item: item[1].get("team_id", []) in users_teams or item[1].get("team_id", []) == "-1"
+    if people[user_id]['role'] < 1:
+        filter_func = lambda item: True
+
+    task_id = utils.choose_id(tasks, "Ingrese el Id de la tarea: ", filter_func=filter_func)
     if task_id == '-1':
         return 0
     task = tasks[task_id]
     input_msg = "Elija que quiere cambiar en la tarea:"
-    options = ["  Nombre",
-               "  Descripcion",
-               "  Prioridad",
-               "  Estado",
-               "  Fecha de Deadline"]
+    options = ["Estado"]
+
+    if people[utils.get_session()['id']]['role'] < 2:
+        options += ["Nombre",
+                    "Descripcion",
+                    "Prioridad",
+                    "Fecha de Deadline"]
     opt, ind = utils.choose(options, input_msg)
-    if ind == 0:
+    if opt == "Nombre":
         new_name = input('Ingrese el nuevo nombre de la tarea: ')
         task['name'] = new_name
-    elif ind == 1:
+    elif opt == "Descripcion":
         new_desc = input('Ingrese la nueva descripcion de la tarea: ')
         task['description'] = new_desc
 
-    elif ind == 2:
+    elif opt == "Prioridad":
         input_msg = "Elija la prioridad"
-        options = ["  Baja",
-                   "  Media",
-                   "  Alta"]
+        options = ["Baja",
+                   "Media",
+                   "Alta"]
         opt, new_prio = utils.choose(options, input_msg)
-
+        if opt == utils.GO_BACK_STR:
+            return None
         task['priority'] = new_prio
 
-    elif ind == 3:
+    elif opt == "Estado":
         input_msg = "Elija el estado"
-        options = ["  Para Asignar",
-                   "  En Progreso",
-                   "  En Revision",
-                   "  Hecho"]
+        options = ["Para Asignar",
+                   "En Progreso",
+                   "En Revision",
+                   "Hecho"]
         opt, new_status = utils.choose(options, input_msg)
+        if opt == utils.GO_BACK_STR:
+            return None
         task['status'] = new_status
         if new_status == STATUS_DONE:
             task['done_at'] = datetime.now().strftime('%d/%m/%Y')
 
-    elif ind == 4:
+    elif opt == "Fecha de Deadline":
         is_valid = False
         while not is_valid:
             new_date =  input('Ingrese la fecha en formato DD/MM/YYYY:')
@@ -274,9 +332,10 @@ def change_task():
             except ValueError:
                 print('Formato de fecha es incorecto.')
     else:
-        return 0
+        return None
 
 
+# Esta función necesita una descripción en español.
 def print_task_info(task):
     """
        Imprime la información detallada de una tarea específica.
