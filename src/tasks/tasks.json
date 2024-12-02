@@ -1,1 +1,38 @@
-{"1": {"name": "12", "description": "tarea ", "priority": 1, "status": 1, "team_id": "1", "do_until": "31/12/9999", "done_at": ""}, "2": {"name": "Test tare", "description": "12", "priority": 1, "status": 4, "team_id": "2", "do_until": "31/12/9999", "done_at": ""}, "3": {"name": "-1", "description": "-1", "priority": 1, "status": 1, "team_id": "2", "do_until": "31/12/9999", "done_at": ""}, "4": {"name": "Eblan's task", "description": "Eblan123", "priority": 2, "status": 1, "team_id": "4", "do_until": "31/12/9999", "done_at": ""}}
+{
+  "1": {
+    "name": "Desarollar autorizacion",
+    "description": "Es necesario desarrollar la autorizaci\u00f3n en el sistema.",
+    "priority": 2,
+    "status": 1,
+    "team_id": "0",
+    "do_until": "31/12/9999",
+    "done_at": ""
+  },
+  "2": {
+    "name": "Mejorar la interfaz.",
+    "description": "Es necesario agregar la posibilidad de seleccionar botones utilizando el teclado.",
+    "priority": 1,
+    "status": 1,
+    "team_id": "1",
+    "do_until": "31/12/9999",
+    "done_at": ""
+  },
+  "3": {
+    "name": "Escribir comentarios  ",
+    "description": "escribir los comentarios ",
+    "priority": 0,
+    "status": 3,
+    "team_id": "1",
+    "do_until": "31/12/9999",
+    "done_at": "01/11/2024"
+  },
+  "4": {
+    "name": "crear funccion Crear_team",
+    "description": "desarollar el funccion que crea una equipo",
+    "priority": 1,
+    "status": 3,
+    "team_id": "1",
+    "do_until": "31/12/9999",
+    "done_at": "02/12/2024"
+  }
+}
