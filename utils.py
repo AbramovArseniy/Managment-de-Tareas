@@ -21,12 +21,12 @@ def load_from_json(file):
     return data
 
 
-def choose_id(d, input_msg="Ingrese el Id: ", filter_func=lambda item: True):
+def choose_id(d, input_msg="Ingrese el Id: ", filter_func=lambda item: True, error_message = 'No hay elementos adecuados\n'):
     filtered_dict = dict(filter(lambda item: int(item[0]) > -1 and filter_func(item), d.items()))
     clear_console()
 
     if len(filtered_dict) == 0:
-        print('No hay elementos adecuados\n')
+        print(error_message)
         input('Pressiona Enter para volver a menu...')
         return '-1'
 

@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import utils
 import src.people.people as people_mod
 from src.datos import *
 
@@ -120,13 +119,30 @@ def assign_team():
        Permite al usuario elegir una tarea y asignarla a un equipo.
     """
     utils.clear_console()
+    user_id = utils.get_session()['id']
+    # user_teams = []
+    # for team in teams.items():
+    #     if user_id in team[1]['person_ids']:
+    #         user_teams.append(team[0])
+    # print(user_teams)
+
+    filter_func = lambda item: item[1].get("team_id", []) == '-1'
+
+    if people[user_id]['role'] < 1:
+        filter_func = lambda item: True
     if len(teams) == 0:
         print('Primero tiene que crear un equipo')
         return
-    task_id = utils.choose_id(tasks, "Elija el Id de la tarea: ")
+    task_id = utils.choose_id(tasks, "Elija el Id de la tarea: ", filter_func=filter_func,
+                              error_message="A todas las tareas se les han asignado comandos.\n")
     if task_id == '-1':
         return 0
-    team_id = utils.choose_id(teams, "Elija el Id del equipo: ")
+    filter_func = lambda item: user_id in item[1].get("person_ids", [])
+    if people[user_id]['role'] < 1:
+        filter_func = lambda item: True
+
+    team_id = utils.choose_id(teams, "Elija el Id del equipo: ", filter_func=filter_func,
+                              error_message="No tienes equipo, primera vez crea tu equipo.\n")
     if team_id == '-1':
         return 0
     tasks[task_id]['team_id'] = team_id
@@ -250,8 +266,7 @@ def change_task():
         return 0
     task = tasks[task_id]
     input_msg = "Elija que quiere cambiar en la tarea:"
-    options = ["Estado",
-        "Descripcion"]
+    options = ["Estado"]
 
     if people[utils.get_session()['id']]['role'] < 2:
         options += ["Nombre",
