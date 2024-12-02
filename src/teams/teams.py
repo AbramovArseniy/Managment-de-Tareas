@@ -220,8 +220,8 @@ def show_team_stats(team_id):
 
     done_per_month.append(cnt_done)
     late_per_month.append(cnt_late)
-    plt.plot(months, done_per_month)
-    plt.plot(months, late_per_month)
+    plt.plot(months, done_per_month, marker='o', markersize=3)
+    plt.plot(months, late_per_month, marker='o', markersize=3)
     plt.title('Tareas Hechas')
     plt.xlabel('Mes')
     plt.ylabel('Cantidad de Tareas')
